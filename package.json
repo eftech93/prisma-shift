@@ -1,13 +1,36 @@
 {
-  "name": "prisma-shift",
+  "name": "@eftech93/prisma-shift",
   "version": "0.0.1",
   "description": "Prisma Client Extension for TypeScript-based data migrations",
+  "keywords": [
+    "prisma",
+    "migration",
+    "data-migration",
+    "typescript",
+    "database"
+  ],
+  "homepage": "https://github.com/eftech93/prisma-shift#readme",
+  "bugs": {
+    "url": "https://github.com/eftech93/prisma-shift/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eftech93/prisma-shift.git"
+  },
+  "license": "MIT",
+  "author": "",
+  "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
     "prisma-shift": "dist/cli.js",
     "prisma-shift-generator": "dist/generator.js",
     "prisma-shift-migrate": "bin/prisma-shift-migrate"
+  },
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "tests"
   },
   "scripts": {
     "build": "tsc",
@@ -26,17 +49,9 @@
     "demo:reset": "cd examples/unified-demo && npm run infra:down && npm run infra:up && npm run migrate",
     "demo:fresh": "cd examples/unified-demo && docker-compose down -v && npm install && npm start"
   },
-  "keywords": [
-    "prisma",
-    "migration",
-    "data-migration",
-    "typescript",
-    "database"
-  ],
-  "author": "",
-  "license": "MIT",
-  "peerDependencies": {
-    "@prisma/client": ">=5.0.0"
+  "dependencies": {
+    "@prisma/generator-helper": "^5.22.0",
+    "commander": "^12.0.0"
   },
   "devDependencies": {
     "@prisma/client": "^5.22.0",
@@ -48,8 +63,7 @@
     "ts-jest": "^29.4.6",
     "typescript": "^5.3.0"
   },
-  "dependencies": {
-    "@prisma/generator-helper": "^5.22.0",
-    "commander": "^12.0.0"
+  "peerDependencies": {
+    "@prisma/client": ">=5.0.0"
   }
 }
