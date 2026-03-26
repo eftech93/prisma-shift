@@ -1,0 +1,30 @@
+[
+  {
+    "id": "user_001",
+    "email": "admin@blog.com",
+    "name": "Admin User",
+    "role": "ADMIN",
+    "createdAt": "2024-01-15T08:00:00Z"
+  },
+  {
+    "id": "user_002",
+    "email": "john@example.com",
+    "name": "John Doe",
+    "role": "AUTHOR",
+    "createdAt": "2024-01-16T10:30:00Z"
+  },
+  {
+    "id": "user_003",
+    "email": "jane@example.com",
+    "name": "Jane Smith",
+    "role": "AUTHOR",
+    "createdAt": "2024-01-17T14:20:00Z"
+  },
+  {
+    "id": "user_004",
+    "email": "bob@example.com",
+    "name": "Bob Wilson",
+    "role": "READER",
+    "createdAt": "2024-01-18T09:15:00Z"
+  }
+]

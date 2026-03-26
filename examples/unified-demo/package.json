@@ -1,0 +1,28 @@
+{
+  "name": "unified-demo",
+  "version": "1.0.0",
+  "description": "Unified demo showing all migration scenarios",
+  "scripts": {
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "db:reset": "prisma migrate reset --force",
+    "data:migrate": "prisma-shift run",
+    "data:status": "prisma-shift status",
+    "data:create": "prisma-shift create",
+    "data:reset": "prisma-shift reset",
+    "deploy": "./deploy.sh",
+    "dev": "ts-node src/app.ts",
+    "studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.10.0",
+    "prisma-shift": "file:../.."
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "prisma": "^5.10.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.3.0"
+  }
+}

@@ -1,0 +1,71 @@
+#!/usr/bin/env node
+
+/**
+ * Drop-in replacement for `prisma` command with data migration support
+ * 
+ * Usage: Replace `prisma` with `prisma-shift-migrate` in your scripts:
+ * 
+ *   "scripts": {
+ *     "migrate": "prisma-shift-migrate migrate deploy",
+ *     "migrate:dev": "prisma-shift-migrate migrate dev",
+ *     "generate": "prisma-shift-migrate generate"
+ *   }
+ * 
+ * When running migrate deploy/dev, data migrations will automatically run after.
+ */
+
+import { spawn } from "child_process";
+import * as path from "path";
+import * as fs from "fs";
+
+const args = process.argv.slice(2);
+const command = args[0];
+const subCommand = args[1];
+
+// Check if this is a migrate command that should trigger data migrations
+const isMigrateDeploy = command === "migrate" && subCommand === "deploy";
+const isMigrateDev = command === "migrate" && subCommand === "dev";
+const isMigrateReset = command === "migrate" && subCommand === "reset";
+
+// Enable auto-run for migrate commands
+if (isMigrateDeploy || isMigrateDev || isMigrateReset) {
+  process.env.PRISMA_DATA_MIGRATION_AUTO_RUN = "true";
+}
+
+// Find prisma binary
+const possiblePaths = [
+  path.join(process.cwd(), "node_modules", ".bin", "prisma"),
+  path.join(process.cwd(), "node_modules", "prisma", "build", "index.js"),
+  path.join(__dirname, "..", "node_modules", ".bin", "prisma"),
+];
+
+let prismaPath = possiblePaths.find((p) => {
+  try {
+    fs.accessSync(p);
+    return true;
+  } catch {
+    return false;
+  }
+});
+
+if (!prismaPath) {
+  console.error("❌ Prisma not found. Make sure prisma is installed:");
+  console.error("   npm install prisma");
+  process.exit(1);
+}
+
+// Run Prisma
+const prisma = spawn(prismaPath, args, {
+  stdio: "inherit",
+  env: process.env,
+  shell: true,
+});
+
+prisma.on("close", (code) => {
+  process.exit(code || 0);
+});
+
+prisma.on("error", (err) => {
+  console.error("❌ Failed to run Prisma:", err);
+  process.exit(1);
+});

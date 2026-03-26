@@ -1,0 +1,142 @@
+// Final schema after all migrations
+// This represents the state after all 8 phases
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Optional: Auto-run data migrations after schema migrations
+// When you run `npx prisma-shift-migrate migrate deploy`,
+// data migrations will automatically run after schema migrations
+// 
+// Or use the wrapper CLI:
+//   npx prisma-shift-migrate migrate deploy
+//
+// Or set PRISMA_DATA_MIGRATION_AUTO_RUN=true before running prisma:
+//   PRISMA_DATA_MIGRATION_AUTO_RUN=true npx prisma migrate deploy
+//
+// generator dataMigration {
+//   provider      = "prisma-shift-generator"
+//   migrationsDir = "./prisma/data-migrations"
+// }
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  role          String    @default("READER")
+  
+  // Profile fields (added in Phase 3)
+  avatar        String?
+  bio           String?
+  theme         String    @default("light")
+  language      String    @default("en")
+  emailNotifications Boolean @default(true)
+  weeklyDigest  Boolean   @default(false)
+  
+  // Aggregated counts (added in Phase 8)
+  postCount     Int       @default(0)
+  
+  // Relations
+  posts         Post[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  color       String   @default("#000000")
+  posts       Post[]
+  createdAt   DateTime @default(now())
+}
+
+model Tag {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  displayName String
+  posts       PostTag[]
+  createdAt   DateTime  @default(now())
+}
+
+model PostTag {
+  postId    String
+  tagId     String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@id([postId, tagId])
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  title       String
+  
+  // Content fields (added in Phase 5)
+  slug        String?   @unique
+  excerpt     String?
+  content     String?
+  readingTime Int?      // minutes
+  
+  // Status fields (refactored in Phase 7)
+  // status      String?   // REMOVED in Phase 7
+  state       String    @default("DRAFT")  // DRAFT, PUBLISHED, ARCHIVED
+  publishedAt DateTime?
+  
+  // Soft delete (added in Phase 4)
+  deletedAt   DateTime?
+  deletedBy   String?
+  
+  // Relations
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  tags        PostTag[]
+  stats       PostStats?
+  
+  // Legacy tracking fields
+  viewCount   Int       @default(0)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([deletedAt])
+  @@index([state])
+  @@index([authorId])
+  @@index([categoryId])
+}
+
+model PostStats {
+  id          String   @id @default(cuid())
+  postId      String   @unique
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  // Aggregated stats (added in Phase 6)
+  viewCount   Int      @default(0)
+  likeCount   Int      @default(0)
+  commentCount Int    @default(0)
+  shareCount  Int      @default(0)
+  
+  lastUpdated DateTime @updatedAt
+  
+  @@index([postId])
+}
+
+// Migration tracking table (managed by prisma-shift)
+model _dataMigration {
+  id         String   @id
+  name       String
+  createdAt  DateTime
+  executedAt DateTime @default(now())
+  duration   Int
+
+  @@ignore
+}

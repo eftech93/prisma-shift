@@ -1,0 +1,53 @@
+{
+  "name": "prisma-shift",
+  "version": "0.1.0",
+  "description": "Prisma Client Extension for TypeScript-based data migrations",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "prisma-shift": "dist/cli.js",
+    "prisma-shift-generator": "dist/generator.js",
+    "prisma-shift-migrate": "bin/prisma-shift-migrate"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "tsc --noEmit",
+    "prepare": "npm run build",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --reporters=default --reporters=jest-junit",
+    "example": "cd examples/unified-demo && docker-compose up -d && npm install && ./deploy.sh && npm run dev",
+    "example:infra": "cd examples/unified-demo && docker-compose up -d",
+    "example:migrate": "cd examples/unified-demo && ./deploy.sh",
+    "example:demo": "cd examples/unified-demo && npm run dev",
+    "example:down": "cd examples/unified-demo && docker-compose down"
+  },
+  "keywords": [
+    "prisma",
+    "migration",
+    "data-migration",
+    "typescript",
+    "database"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "@prisma/client": ">=5.0.0"
+  },
+  "devDependencies": {
+    "@prisma/client": "^5.22.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.0.0",
+    "jest": "^30.3.0",
+    "jest-junit": "^16.0.0",
+    "prisma": "^5.10.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "@prisma/generator-helper": "^5.22.0",
+    "commander": "^12.0.0"
+  }
+}

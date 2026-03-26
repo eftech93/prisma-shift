@@ -1,0 +1,47 @@
+[
+  {
+    "id": "post_001",
+    "title": "Welcome to Our Blog",
+    "content": "This is our first blog post. We're excited to share our journey with you! This platform will be used to share technical insights, tutorials, and industry news.",
+    "status": "published",
+    "authorId": "user_001",
+    "createdAt": "2024-01-20T12:00:00Z",
+    "viewCount": 1250
+  },
+  {
+    "id": "post_002",
+    "title": "Getting Started with TypeScript",
+    "content": "TypeScript is a typed superset of JavaScript that compiles to plain JavaScript. It offers classes, modules, and interfaces to help you build robust components. In this tutorial, we'll cover the basics...",
+    "status": "published",
+    "authorId": "user_002",
+    "createdAt": "2024-01-22T15:30:00Z",
+    "viewCount": 890
+  },
+  {
+    "id": "post_003",
+    "title": "Database Design Best Practices",
+    "content": "Designing a good database schema is crucial for application performance. In this article, we'll discuss normalization, indexing strategies, and common pitfalls to avoid when designing your database.",
+    "status": "draft",
+    "authorId": "user_002",
+    "createdAt": "2024-01-25T09:00:00Z",
+    "viewCount": 0
+  },
+  {
+    "id": "post_004",
+    "title": "Introduction to Prisma",
+    "content": "Prisma is a next-generation ORM for Node.js and TypeScript. It provides type-safe database access with an intuitive data model, automated migrations, and a powerful query engine.",
+    "status": "published",
+    "authorId": "user_003",
+    "createdAt": "2024-01-28T11:20:00Z",
+    "viewCount": 2100
+  },
+  {
+    "id": "post_005",
+    "title": "Advanced React Patterns",
+    "content": "Learn about advanced React patterns including render props, higher-order components, custom hooks, and the compound component pattern. These patterns will help you build more reusable and maintainable components.",
+    "status": "archived",
+    "authorId": "user_003",
+    "createdAt": "2024-02-01T16:45:00Z",
+    "viewCount": 3400
+  }
+]

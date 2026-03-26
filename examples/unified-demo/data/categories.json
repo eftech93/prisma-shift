@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Technology",
+    "description": "Tech news, tutorials, and insights",
+    "color": "#3B82F6"
+  },
+  {
+    "name": "Programming",
+    "description": "Coding tutorials and best practices",
+    "color": "#10B981"
+  },
+  {
+    "name": "Database",
+    "description": "Database design and optimization",
+    "color": "#8B5CF6"
+  },
+  {
+    "name": "DevOps",
+    "description": "Deployment, CI/CD, and infrastructure",
+    "color": "#F59E0B"
+  },
+  {
+    "name": "General",
+    "description": "General news and announcements",
+    "color": "#6B7280"
+  }
+]

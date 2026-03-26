@@ -1,0 +1,12 @@
+{
+  "theme": "light",
+  "language": "en",
+  "emailNotifications": true,
+  "weeklyDigest": false,
+  "defaultAvatar": "https://api.dicebear.com/7.x/avataaars/svg",
+  "editorPreferences": {
+    "fontSize": 14,
+    "lineHeight": 1.5,
+    "spellCheck": true
+  }
+}

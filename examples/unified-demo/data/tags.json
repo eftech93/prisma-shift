@@ -1,0 +1,42 @@
+[
+  {
+    "name": "typescript",
+    "displayName": "TypeScript"
+  },
+  {
+    "name": "javascript",
+    "displayName": "JavaScript"
+  },
+  {
+    "name": "react",
+    "displayName": "React"
+  },
+  {
+    "name": "nodejs",
+    "displayName": "Node.js"
+  },
+  {
+    "name": "prisma",
+    "displayName": "Prisma"
+  },
+  {
+    "name": "database",
+    "displayName": "Database"
+  },
+  {
+    "name": "tutorial",
+    "displayName": "Tutorial"
+  },
+  {
+    "name": "beginners",
+    "displayName": "Beginners"
+  },
+  {
+    "name": "advanced",
+    "displayName": "Advanced"
+  },
+  {
+    "name": "best-practices",
+    "displayName": "Best Practices"
+  }
+]
