@@ -101,7 +101,7 @@ export class MigrationRunner {
     
     await this.prisma.$executeRawUnsafe(
       `INSERT INTO "${tableName}" ("id", "name", "createdAt", "executedAt", "duration") 
-       VALUES ($1, $2, $3, CURRENT_TIMESTAMP, $4)`,
+       VALUES ($1, $2, $3::timestamp, CURRENT_TIMESTAMP, $4)`,
       migration.id,
       migration.name,
       createdAt.toISOString(),

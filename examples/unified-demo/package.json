@@ -13,7 +13,15 @@
     "data:reset": "prisma-shift reset",
     "deploy": "./deploy.sh",
     "dev": "ts-node src/app.ts",
-    "studio": "prisma studio"
+    "studio": "prisma studio",
+    "infra:up": "docker-compose up -d",
+    "infra:down": "docker-compose down",
+    "infra:logs": "docker-compose logs -f",
+    "start": "npm run infra:up && npm run migrate",
+    "start:fresh": "docker-compose down -v && npm run infra:up && npm run migrate",
+    "migrate": "npm run wait:db && npx prisma-shift deploy",
+    "reset": "npm run data:reset && npm run migrate",
+    "wait:db": "node wait-for-db.js"
   },
   "dependencies": {
     "@prisma/client": "^5.10.0",

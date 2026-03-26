@@ -18,6 +18,83 @@ export function generateMigrationId(name: string): string {
 }
 
 /**
+ * Register TypeScript loader if available
+ */
+function registerTypeScriptLoader(): void {
+  // Check if tsx/cjs is available first (faster, no type checking)
+  try {
+    require.resolve("tsx/cjs", { paths: [process.cwd()] });
+    require(path.join(process.cwd(), "node_modules/tsx/cjs"));
+    return;
+  } catch {
+    try {
+      require("tsx/cjs");
+      return;
+    } catch {
+      // tsx not available
+    }
+  }
+
+  // Fall back to ts-node with transpile-only mode
+  try {
+    const tsNode = require(path.join(process.cwd(), "node_modules/ts-node"));
+    tsNode.register({
+      transpileOnly: true,
+      skipProject: true, // Don't use the project's tsconfig.json
+      compilerOptions: {
+        module: "commonjs",
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true,
+        strict: false,
+      },
+    });
+    return;
+  } catch {
+    try {
+      const tsNode = require("ts-node");
+      tsNode.register({
+        transpileOnly: true,
+        skipProject: true,
+        compilerOptions: {
+          module: "commonjs",
+          esModuleInterop: true,
+          allowSyntheticDefaultImports: true,
+          strict: false,
+        },
+      });
+      return;
+    } catch {
+      // ts-node not available
+    }
+  }
+}
+
+/**
+ * Check if TypeScript support is needed and available
+ */
+function ensureTypeScriptSupport(files: string[]): void {
+  const hasTypeScript = files.some((f) => f.endsWith(".ts"));
+  
+  if (!hasTypeScript) {
+    return;
+  }
+
+  // Try to register TypeScript loader
+  registerTypeScriptLoader();
+
+  // Check if TypeScript is now supported
+  if (!require.extensions[".ts"]) {
+    throw new Error(
+      `TypeScript migrations found but no TypeScript loader is available.\n` +
+      `Please install ts-node or tsx as a dev dependency:\n` +
+      `  npm install --save-dev ts-node\n` +
+      `  or\n` +
+      `  npm install --save-dev tsx`
+    );
+  }
+}
+
+/**
  * Load all migration files from a directory
  */
 export async function loadMigrations(migrationsDir: string): Promise<DataMigration[]> {
@@ -30,10 +107,14 @@ export async function loadMigrations(migrationsDir: string): Promise<DataMigrati
     .filter((f) => f.endsWith(".ts") || f.endsWith(".js"))
     .sort();
 
+  // Ensure TypeScript support is available if needed
+  ensureTypeScriptSupport(files);
+
   const migrations: DataMigration[] = [];
 
   for (const file of files) {
-    const filePath = path.join(migrationsDir, file);
+    // Use absolute path to ensure correct resolution
+    const filePath = path.resolve(migrationsDir, file);
     const migrationModule = await import(filePath);
     
     // Support both default export and named export

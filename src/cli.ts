@@ -43,15 +43,22 @@ program
 
 // Helper to load Prisma client dynamically
 async function getPrismaClient(): Promise<PrismaClient> {
-  // Try to find prisma client
+  // Try to find prisma client - prefer cwd's version first
   let PrismaClientClass: any;
   
   try {
-    const prismaModule = await import("@prisma/client");
-    PrismaClientClass = (prismaModule as any).PrismaClient;
+    // Try cwd first (for local development/linked packages)
+    const cwdModule = await import(path.join(process.cwd(), "node_modules/@prisma/client"));
+    PrismaClientClass = cwdModule.PrismaClient;
   } catch {
-    console.error("Error: @prisma/client not found. Make sure Prisma is set up.");
-    process.exit(1);
+    try {
+      // Fall back to regular import
+      const prismaModule = await import("@prisma/client");
+      PrismaClientClass = (prismaModule as any).PrismaClient;
+    } catch {
+      console.error("Error: @prisma/client not found. Make sure Prisma is set up.");
+      process.exit(1);
+    }
   }
   
   return new PrismaClientClass();

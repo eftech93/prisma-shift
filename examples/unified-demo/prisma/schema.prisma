@@ -86,8 +86,7 @@ model Post {
   readingTime Int?      // minutes
   
   // Status fields (refactored in Phase 7)
-  // status      String?   // REMOVED in Phase 7
-  state       String    @default("DRAFT")  // DRAFT, PUBLISHED, ARCHIVED
+  state       String    @default("DRAFT")
   publishedAt DateTime?
   
   // Soft delete (added in Phase 4)
@@ -102,7 +101,6 @@ model Post {
   tags        PostTag[]
   stats       PostStats?
   
-  // Legacy tracking fields
   viewCount   Int       @default(0)
   
   createdAt   DateTime  @default(now())
@@ -119,7 +117,6 @@ model PostStats {
   postId      String   @unique
   post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   
-  // Aggregated stats (added in Phase 6)
   viewCount   Int      @default(0)
   likeCount   Int      @default(0)
   commentCount Int    @default(0)
@@ -130,13 +127,5 @@ model PostStats {
   @@index([postId])
 }
 
-// Migration tracking table (managed by prisma-shift)
-model _dataMigration {
-  id         String   @id
-  name       String
-  createdAt  DateTime
-  executedAt DateTime @default(now())
-  duration   Int
-
-  @@ignore
-}
+// Note: The _dataMigration table is managed by prisma-shift
+// and is created automatically via raw SQL (not Prisma migrations)

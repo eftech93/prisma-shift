@@ -3,19 +3,15 @@ import { MigrationRunner } from "./migration-runner";
 import { MigrationOptions, MigrationStatus, MigrationResult } from "./types";
 import type { PrismaClient } from "@prisma/client";
 
-// Extension module augmentation for PrismaClient
-declare global {
-  namespace PrismaClientExtensions {
-    interface DataMigrationsExtension {
-      $dataMigrations: {
-        run: () => Promise<MigrationResult>;
-        status: () => Promise<MigrationStatus>;
-        rollback: () => Promise<boolean>;
-        reset: () => Promise<void>;
-      };
-    }
-  }
-}
+// Extension result type
+export type WithDataMigrations<T> = T & {
+  $dataMigrations: {
+    run: () => Promise<MigrationResult>;
+    status: () => Promise<MigrationStatus>;
+    rollback: () => Promise<boolean>;
+    reset: () => Promise<void>;
+  };
+};
 
 /**
  * Create a Prisma client extension for data migrations
@@ -70,9 +66,9 @@ export function createMigrationExtension(options: MigrationOptions) {
 export function withDataMigrations<T extends PrismaClient>(
   prisma: T,
   options: MigrationOptions
-): T {
+): WithDataMigrations<T> {
   const extension = createMigrationExtension(options);
-  return (prisma as any).$extends(extension);
+  return (prisma as any).$extends(extension) as WithDataMigrations<T>;
 }
 
 /**
@@ -89,7 +85,7 @@ export function withDataMigrations<T extends PrismaClient>(
  */
 export function createPrismaClientWithMigrations(
   options: MigrationOptions & { prismaClientOptions?: any }
-): PrismaClient & { $dataMigrations: { run: () => Promise<MigrationResult>; status: () => Promise<MigrationStatus>; rollback: () => Promise<boolean>; reset: () => Promise<void>; } } {
+): WithDataMigrations<PrismaClient> {
   const { PrismaClient } = require("@prisma/client");
   const { migrationsDir, migrationsTable, schemaPath, autoRun, prismaClientOptions } = options;
   

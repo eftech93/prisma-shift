@@ -46,7 +46,7 @@ const migration: DataMigration = {
     // Get all posts and tags for linking
     const posts = await prisma.post.findMany();
     const tags = await prisma.tag.findMany();
-    const tagMap = new Map(tags.map((t) => [t.name, t.id]));
+    const tagMap = new Map(tags.map((t: { name: string; id: string }) => [t.name, t.id]));
 
     log("Linking tags to posts based on content...");
     let linkCount = 0;

@@ -2,17 +2,24 @@
 
 A comprehensive example demonstrating **3 schema migrations** (Prisma SQL) and **8 data migrations** (TypeScript) working together to evolve a blog platform.
 
-## 🚀 Quick Start (3 Commands)
+## 🚀 Quick Start (One Command!)
+
+```bash
+# Start infrastructure, run migrations, and start the demo
+npm install && npm start
+```
+
+Or step by step:
 
 ```bash
 # 1. Start the database
-docker-compose up -d
+npm run infra:up
 
-# 2. Install dependencies
-npm install
+# 2. Run all migrations (schema + data)
+npm run migrate
 
-# 3. Run all migrations and the demo
-npx prisma-shift deploy && npm run dev
+# 3. Start the demo app
+npm run dev
 ```
 
 ## 📋 Prerequisites
@@ -21,23 +28,32 @@ npx prisma-shift deploy && npm run dev
 - [Node.js](https://nodejs.org/) 18+ and npm
 - (Optional) Make (for using convenient commands)
 
+## 📜 Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start infra + run all migrations (one command!) |
+| `npm run infra:up` | Start Docker containers (PostgreSQL + Adminer) |
+| `npm run infra:down` | Stop Docker containers |
+| `npm run migrate` | Wait for DB, then run schema + data migrations |
+| `npm run dev` | Run the demo application |
+| `npm run studio` | Open Prisma Studio (DB UI at localhost:5555) |
+| `npm run data:status` | Check migration status |
+| `npm run data:create <name>` | Create a new data migration |
+
 ## 🏃 Step-by-Step Guide
 
 ### Step 1: Start the Database
 
 ```bash
-# Using Docker Compose
-docker-compose up -d
-
-# Or using Make
-make up
+npm run infra:up
 ```
 
 This starts:
 - **PostgreSQL** on port 5432
 - **Adminer** (DB UI) on http://localhost:8080
 
-Wait a few seconds for the database to be ready.
+The migrate command will automatically wait for the database to be ready.
 
 ### Step 2: Install Dependencies
 
