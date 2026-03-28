@@ -1,6 +1,12 @@
 # Unified Demo: Complete Blog Platform Evolution
 
-A comprehensive example demonstrating **3 schema migrations** (Prisma SQL) and **8 data migrations** (TypeScript) working together to evolve a blog platform.
+A comprehensive example demonstrating:
+- **3 schema migrations** (Prisma SQL)
+- **12 data migrations** (TypeScript) including advanced features
+- **Configuration file** (`prisma-shift.config.ts`)
+- **Lifecycle hooks** (backup & notification scripts)
+
+This demo showcases all features of Prisma Shift including batch processing, conditional migrations, distributed locking, and more.
 
 ## 🚀 Quick Start (One Command!)
 
@@ -178,7 +184,7 @@ make clean     # Stop and remove everything
 | `02_add_categories_and_profiles` | Category table, profile fields | Features & user profiles |
 | `03_add_tags_content_and_stats` | Tag, PostStats tables, content fields | Complete feature set |
 
-### Data Migrations (8 TypeScript Files)
+### Data Migrations (12 TypeScript Files)
 
 | Migration | Pattern | What It Does |
 |-----------|---------|--------------|
@@ -190,6 +196,10 @@ make clean     # Stop and remove everything
 | `06_aggregate_post_stats.ts` | Large Dataset | Batch processes stats with progress |
 | `07_migrate_status_values.ts` | Enum Migration | `draft` → `DRAFT`, adds publishedAt |
 | `08_sync_user_counts.ts` | Multi-Table Sync | Aggregates post counts per user |
+| `09_batch_reindex_posts.ts` | Batch Processing | Reindex posts with progress tracking |
+| `10_conditional_feature_flag.ts` | Conditional | Only runs if feature flag is enabled |
+| `11_dependency_migration.ts` | Dependencies | Ensures prerequisites are met first |
+| `12_long_running_with_timeout.ts` | Long-Running | Custom timeout, outside transaction |
 
 ## 🔄 Reset and Replay
 
@@ -275,7 +285,11 @@ unified-demo/
 │       ├── 05_generate_content_fields.ts
 │       ├── 06_aggregate_post_stats.ts
 │       ├── 07_migrate_status_values.ts
-│       └── 08_sync_user_counts.ts
+│       ├── 08_sync_user_counts.ts
+│       ├── 09_batch_reindex_posts.ts
+│       ├── 10_conditional_feature_flag.ts
+│       ├── 11_dependency_migration.ts
+│       └── 12_long_running_with_timeout.ts
 │
 └── src/
     └── app.ts                           # Demo application
@@ -304,7 +318,93 @@ PHASE 3: Tags, Content, Stats & Status
 ├── Data: 06_aggregate_post_stats.ts
 ├── Data: 07_migrate_status_values.ts
 └── Data: 08_sync_user_counts.ts
+
+PHASE 4: Advanced Features
+├── Data: 09_batch_reindex_posts.ts (Batch processing)
+├── Data: 10_conditional_feature_flag.ts (Conditional)
+├── Data: 11_dependency_migration.ts (Dependencies)
+└── Data: 12_long_running_with_timeout.ts (Timeout + No Tx)
 ```
+
+## 🔥 Advanced Features Demonstrated
+
+### Phase 9: Batch Processing (`09_batch_reindex_posts.ts`)
+Demonstrates processing large datasets in batches with progress tracking.
+```bash
+# Run just this migration
+npx prisma-shift run
+```
+**Features shown:**
+- `batch()` helper for chunked processing
+- Progress indicators
+- Error collection per batch
+
+### Phase 10: Conditional Migration (`10_conditional_feature_flag.ts`)
+Only runs if a condition is met (e.g., feature flag enabled).
+**Features shown:**
+- `condition` property for runtime checks
+- Database state-dependent execution
+
+### Phase 11: Migration Dependencies (`11_dependency_migration.ts`)
+Ensures prerequisite migrations are executed first.
+**Features shown:**
+- `requiresData` for data migration dependencies
+- Validation that dependencies exist
+
+### Phase 12: Long Running with Timeout (`12_long_running_with_timeout.ts`)
+Demonstrates custom timeouts and running outside transactions.
+**Features shown:**
+- `timeout` property for long operations
+- `disableTransaction` for operations that need to commit incrementally
+- Progress logging
+
+### Configuration (`prisma-shift.config.ts`)
+Centralized configuration for all features:
+```typescript
+export default {
+  lock: { enabled: true },        // Distributed locking
+  logging: { level: "info" },      // Structured logging
+  hooks: {                        // Lifecycle hooks
+    beforeAll: "./scripts/backup.ts",
+    afterAll: "./scripts/notify.ts",
+  },
+} satisfies Config;
+```
+
+### Testing Distributed Locking
+To test the locking mechanism, try running migrations in two terminals simultaneously:
+
+**Without `--wait` (fails fast):**
+```bash
+# Terminal 1 - Start a long migration
+npx prisma-shift run
+
+# Terminal 2 (while Terminal 1 is running) - Fails immediately
+npx prisma-shift run
+# Error: Could not acquire migration lock. Another instance may be running migrations.
+```
+
+**With `--wait` (waits for lock):**
+```bash
+# Terminal 1 - Start a long migration
+npx prisma-shift run
+
+# Terminal 2 (while Terminal 1 is running) - Waits patiently
+npx prisma-shift run --wait
+# Waiting to acquire migration lock...
+# Another instance is running migrations. Waiting...
+# Lock acquired after N attempt(s)
+```
+
+### Testing Hooks
+Enable hooks in `prisma-shift.config.ts`:
+```typescript
+hooks: {
+  beforeAll: "./scripts/backup.ts",
+  afterAll: "./scripts/notify.ts",
+}
+```
+Then run migrations to see hooks execute.
 
 ## 🎯 Make Commands
 

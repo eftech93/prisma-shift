@@ -261,17 +261,15 @@ describe("Integration Tests", () => {
 
   describe("MigrationContext", () => {
     it("should provide prisma client and log function to migrations", async () => {
-      const logMessages: string[] = [];
-      
       const migration: DataMigration = {
         id: "20240324120000_test",
         name: "test",
         createdAt: Date.now(),
         up: jest.fn().mockImplementation(async ({ prisma, log }) => {
           expect(prisma).toBeDefined();
-          expect(typeof log).toBe("function");
-          log("Test message");
-          logMessages.push("Test message");
+          expect(log).toBeDefined();
+          expect(typeof log.info).toBe("function");
+          log.info("Test message");
         }),
       };
 
@@ -279,7 +277,6 @@ describe("Integration Tests", () => {
       await runner.runMigrations();
 
       expect(migration.up).toHaveBeenCalled();
-      expect(logMessages).toContain("Test message");
     });
   });
 

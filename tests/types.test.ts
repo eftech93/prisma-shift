@@ -1,4 +1,5 @@
 import { DataMigration, MigrationContext, MigrationRecord } from "../src/types";
+import { createSilentLogger } from "../src/logger";
 
 describe("Types", () => {
   describe("DataMigration interface", () => {
@@ -8,10 +9,10 @@ describe("Types", () => {
         name: "test migration",
         createdAt: Date.now(),
         up: async (ctx: MigrationContext) => {
-          ctx.log("Testing");
+          ctx.log.info("Testing");
         },
         down: async (ctx: MigrationContext) => {
-          ctx.log("Rolling back");
+          ctx.log.info("Rolling back");
         },
       };
 
@@ -53,11 +54,13 @@ describe("Types", () => {
       const mockPrisma = {} as any;
       const context: MigrationContext = {
         prisma: mockPrisma,
-        log: (msg: string) => console.log(msg),
+        log: createSilentLogger() as any,
+        batch: async () => ({ processed: 0, batches: 0, duration: 0, errors: [] }),
+        progress: () => ({ increment: () => {}, set: () => {}, done: () => {} }),
       };
 
       expect(context.prisma).toBe(mockPrisma);
-      expect(typeof context.log).toBe("function");
+      expect(context.log).toBeDefined();
     });
   });
 });

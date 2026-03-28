@@ -3,6 +3,14 @@ import * as path from "path";
 import { DataMigration } from "./types";
 
 /**
+ * TypeScript loader options
+ */
+export interface TypeScriptOptions {
+  compiler?: "ts-node" | "tsx";
+  transpileOnly?: boolean;
+}
+
+/**
  * Generate a migration ID based on current timestamp
  */
 export function generateMigrationId(name: string): string {
@@ -20,18 +28,23 @@ export function generateMigrationId(name: string): string {
 /**
  * Register TypeScript loader if available
  */
-function registerTypeScriptLoader(): void {
-  // Check if tsx/cjs is available first (faster, no type checking)
-  try {
-    require.resolve("tsx/cjs", { paths: [process.cwd()] });
-    require(path.join(process.cwd(), "node_modules/tsx/cjs"));
-    return;
-  } catch {
+function registerTypeScriptLoader(options?: TypeScriptOptions): void {
+  const compiler = options?.compiler ?? "tsx";
+  const transpileOnly = options?.transpileOnly ?? true;
+
+  if (compiler === "tsx") {
+    // Try tsx first (faster, no type checking)
     try {
-      require("tsx/cjs");
+      require.resolve("tsx/cjs", { paths: [process.cwd()] });
+      require(path.join(process.cwd(), "node_modules/tsx/cjs"));
       return;
     } catch {
-      // tsx not available
+      try {
+        require("tsx/cjs");
+        return;
+      } catch {
+        // tsx not available, fall back to ts-node
+      }
     }
   }
 
@@ -39,8 +52,8 @@ function registerTypeScriptLoader(): void {
   try {
     const tsNode = require(path.join(process.cwd(), "node_modules/ts-node"));
     tsNode.register({
-      transpileOnly: true,
-      skipProject: true, // Don't use the project's tsconfig.json
+      transpileOnly,
+      skipProject: true,
       compilerOptions: {
         module: "commonjs",
         esModuleInterop: true,
@@ -53,7 +66,7 @@ function registerTypeScriptLoader(): void {
     try {
       const tsNode = require("ts-node");
       tsNode.register({
-        transpileOnly: true,
+        transpileOnly,
         skipProject: true,
         compilerOptions: {
           module: "commonjs",
@@ -72,17 +85,15 @@ function registerTypeScriptLoader(): void {
 /**
  * Check if TypeScript support is needed and available
  */
-function ensureTypeScriptSupport(files: string[]): void {
+function ensureTypeScriptSupport(files: string[], options?: TypeScriptOptions): void {
   const hasTypeScript = files.some((f) => f.endsWith(".ts"));
   
   if (!hasTypeScript) {
     return;
   }
 
-  // Try to register TypeScript loader
-  registerTypeScriptLoader();
+  registerTypeScriptLoader(options);
 
-  // Check if TypeScript is now supported
   if (!require.extensions[".ts"]) {
     throw new Error(
       `TypeScript migrations found but no TypeScript loader is available.\n` +
@@ -97,7 +108,10 @@ function ensureTypeScriptSupport(files: string[]): void {
 /**
  * Load all migration files from a directory
  */
-export async function loadMigrations(migrationsDir: string): Promise<DataMigration[]> {
+export async function loadMigrations(
+  migrationsDir: string,
+  typescriptOptions?: TypeScriptOptions
+): Promise<DataMigration[]> {
   if (!fs.existsSync(migrationsDir)) {
     return [];
   }
@@ -107,17 +121,14 @@ export async function loadMigrations(migrationsDir: string): Promise<DataMigrati
     .filter((f) => f.endsWith(".ts") || f.endsWith(".js"))
     .sort();
 
-  // Ensure TypeScript support is available if needed
-  ensureTypeScriptSupport(files);
+  ensureTypeScriptSupport(files, typescriptOptions);
 
   const migrations: DataMigration[] = [];
 
   for (const file of files) {
-    // Use absolute path to ensure correct resolution
     const filePath = path.resolve(migrationsDir, file);
     const migrationModule = await import(filePath);
     
-    // Support both default export and named export
     const migration: DataMigration = migrationModule.default || migrationModule.migration;
     
     if (!migration) {
@@ -131,7 +142,6 @@ export async function loadMigrations(migrationsDir: string): Promise<DataMigrati
     migrations.push(migration);
   }
 
-  // Sort by createdAt, then by id as fallback
   migrations.sort((a, b) => {
     if (a.createdAt !== b.createdAt) {
       return a.createdAt - b.createdAt;
@@ -166,12 +176,19 @@ const migration: DataMigration = {
   name: "${name}",
   createdAt: ${Date.now()},
 
-  async up({ prisma, log }: MigrationContext) {
+  async up({ prisma, log, batch }: MigrationContext) {
     // Write your migration code here
     // Example:
     // await prisma.user.updateMany({
     //   where: { emailVerified: null },
     //   data: { emailVerified: false }
+    // });
+    
+    // For large datasets, use batch processing:
+    // await batch({
+    //   query: () => prisma.post.findMany({ where: { processed: false } }),
+    //   batchSize: 1000,
+    //   process: async (posts) => { /* ... */ }
     // });
     
     log("Running migration: ${name}");
@@ -180,6 +197,12 @@ const migration: DataMigration = {
   // Optional: rollback function
   // async down({ prisma, log }: MigrationContext) {
   //   log("Rolling back migration: ${name}");
+  // }
+  
+  // Optional: condition to check before running
+  // condition: async ({ prisma }) => {
+  //   const count = await prisma.user.count();
+  //   return count > 0;
   // }
 };
 
@@ -192,4 +215,30 @@ export default migration;
  */
 export function isTypeScriptEnvironment(): boolean {
   return !!require.extensions[".ts"];
+}
+
+/**
+ * Validate migration file syntax
+ */
+export function validateMigrationFile(filePath: string): { valid: boolean; error?: string } {
+  try {
+    const content = fs.readFileSync(filePath, "utf8");
+    
+    // Basic syntax checks
+    if (!content.includes("export default") && !content.includes("export const migration")) {
+      return { valid: false, error: "Migration must have a default export or named 'migration' export" };
+    }
+    
+    if (!content.includes("id:")) {
+      return { valid: false, error: "Migration must have an 'id' property" };
+    }
+    
+    if (!content.includes("up:")) {
+      return { valid: false, error: "Migration must have an 'up' function" };
+    }
+    
+    return { valid: true };
+  } catch (error) {
+    return { valid: false, error: `Failed to read file: ${error}` };
+  }
 }

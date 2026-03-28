@@ -25,7 +25,7 @@ const migration: DataMigration = {
     const dataDir = path.join(process.cwd(), "data");
 
     // Load tags from JSON
-    log("Loading tags from tags.json...");
+    log.info("Loading tags from tags.json...");
     const tagsData = JSON.parse(
       fs.readFileSync(path.join(dataDir, "tags.json"), "utf8")
     );
@@ -41,14 +41,14 @@ const migration: DataMigration = {
         update: {},
       });
     }
-    log(`Created ${tagsData.length} tags`);
+    log.info(`Created ${tagsData.length} tags`);
 
     // Get all posts and tags for linking
     const posts = await prisma.post.findMany();
     const tags = await prisma.tag.findMany();
     const tagMap = new Map(tags.map((t: { name: string; id: string }) => [t.name, t.id]));
 
-    log("Linking tags to posts based on content...");
+    log.info("Linking tags to posts based on content...");
     let linkCount = 0;
 
     for (const post of posts) {
@@ -102,18 +102,18 @@ const migration: DataMigration = {
       }
     }
 
-    log(`Linked ${linkCount} tags to posts`);
-    log("Tag import complete!");
+    log.info(`Linked ${linkCount} tags to posts`);
+    log.info("Tag import complete!");
   },
 
   async down({ prisma, log }: MigrationContext) {
-    log("Removing tag links...");
+    log.info("Removing tag links...");
     await prisma.postTag.deleteMany({});
 
-    log("Removing tags...");
+    log.info("Removing tags...");
     await prisma.tag.deleteMany({});
 
-    log("Tags removed");
+    log.info("Tags removed");
   },
 };
 

@@ -25,12 +25,12 @@ const migration: DataMigration = {
     // Check if we already have data (idempotency check)
     const existingUsers = await prisma.user.count();
     if (existingUsers > 0) {
-      log("Seed data already loaded, skipping");
+      log.info("Seed data already loaded, skipping");
       return;
     }
 
     // Load users from JSON
-    log("Loading users from seed-users.json...");
+    log.info("Loading users from seed-users.json...");
     const usersData = JSON.parse(
       fs.readFileSync(path.join(dataDir, "seed-users.json"), "utf8")
     );
@@ -46,10 +46,10 @@ const migration: DataMigration = {
         },
       });
     }
-    log(`Created ${usersData.length} users`);
+    log.info(`Created ${usersData.length} users`);
 
     // Load posts from JSON
-    log("Loading posts from seed-posts.json...");
+    log.info("Loading posts from seed-posts.json...");
     const postsData = JSON.parse(
       fs.readFileSync(path.join(dataDir, "seed-posts.json"), "utf8")
     );
@@ -68,20 +68,20 @@ const migration: DataMigration = {
         },
       });
     }
-    log(`Created ${postsData.length} posts`);
+    log.info(`Created ${postsData.length} posts`);
 
-    log("Seed data loaded successfully!");
+    log.info("Seed data loaded successfully!");
   },
 
   async down({ prisma, log }: MigrationContext) {
     // Delete in reverse order (posts first due to foreign key)
-    log("Removing seed posts...");
+    log.info("Removing seed posts...");
     await prisma.post.deleteMany({});
 
-    log("Removing seed users...");
+    log.info("Removing seed users...");
     await prisma.user.deleteMany({});
 
-    log("Seed data removed");
+    log.info("Seed data removed");
   },
 };
 

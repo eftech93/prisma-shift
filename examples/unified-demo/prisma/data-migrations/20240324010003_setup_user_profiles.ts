@@ -24,7 +24,7 @@ const migration: DataMigration = {
     const dataDir = path.join(process.cwd(), "data");
 
     // Load default settings from JSON
-    log("Loading default settings from JSON...");
+    log.info("Loading default settings from JSON...");
     const defaultSettings = JSON.parse(
       fs.readFileSync(path.join(dataDir, "default-settings.json"), "utf8")
     );
@@ -34,7 +34,7 @@ const migration: DataMigration = {
       where: { avatar: null },
     });
 
-    log(`Setting up profiles for ${users.length} users...`);
+    log.info(`Setting up profiles for ${users.length} users...`);
 
     for (const user of users) {
       // Generate avatar URL using DiceBear API with user ID as seed
@@ -53,12 +53,12 @@ const migration: DataMigration = {
       });
     }
 
-    log(`Updated ${users.length} user profiles`);
-    log(`Default settings applied: theme=${defaultSettings.theme}, language=${defaultSettings.language}`);
+    log.info(`Updated ${users.length} user profiles`);
+    log.info(`Default settings applied: theme=${defaultSettings.theme}, language=${defaultSettings.language}`);
   },
 
   async down({ prisma, log }: MigrationContext) {
-    log("Clearing user profile data...");
+    log.info("Clearing user profile data...");
     
     await prisma.user.updateMany({
       data: {
@@ -71,7 +71,7 @@ const migration: DataMigration = {
       },
     });
 
-    log("User profiles reset");
+    log.info("User profiles reset");
   },
 };
 

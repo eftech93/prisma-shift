@@ -23,7 +23,7 @@ const migration: DataMigration = {
     const dataDir = path.join(process.cwd(), "data");
 
     // Load categories from JSON
-    log("Loading categories from categories.json...");
+    log.info("Loading categories from categories.json...");
     const categoriesData = JSON.parse(
       fs.readFileSync(path.join(dataDir, "categories.json"), "utf8")
     );
@@ -40,7 +40,7 @@ const migration: DataMigration = {
         update: {}, // No update needed
       });
     }
-    log(`Created ${categoriesData.length} categories`);
+    log.info(`Created ${categoriesData.length} categories`);
 
     // Get the "General" category for default assignment
     const generalCategory = await prisma.category.findUnique({
@@ -52,15 +52,15 @@ const migration: DataMigration = {
     }
 
     // Assign all uncategorized posts to "General"
-    log("Assigning existing posts to General category...");
+    log.info("Assigning existing posts to General category...");
     const result = await prisma.post.updateMany({
       where: { categoryId: null },
       data: { categoryId: generalCategory.id },
     });
-    log(`Assigned ${result.count} posts to General category`);
+    log.info(`Assigned ${result.count} posts to General category`);
 
     // Assign specific posts to relevant categories based on content
-    log("Assigning posts to relevant categories...");
+    log.info("Assigning posts to relevant categories...");
     
     // Assign TypeScript post to Programming
     const programmingCat = await prisma.category.findUnique({
@@ -73,7 +73,7 @@ const migration: DataMigration = {
         },
         data: { categoryId: programmingCat.id },
       });
-      log("Assigned TypeScript posts to Programming");
+      log.info("Assigned TypeScript posts to Programming");
     }
 
     // Assign Prisma post to Database
@@ -90,24 +90,24 @@ const migration: DataMigration = {
         },
         data: { categoryId: databaseCat.id },
       });
-      log("Assigned Database/Prisma posts to Database category");
+      log.info("Assigned Database/Prisma posts to Database category");
     }
 
-    log("Category setup complete!");
+    log.info("Category setup complete!");
   },
 
   async down({ prisma, log }: MigrationContext) {
     // Remove category assignments first
-    log("Removing category assignments...");
+    log.info("Removing category assignments...");
     await prisma.post.updateMany({
       data: { categoryId: null },
     });
 
     // Delete categories
-    log("Deleting categories...");
+    log.info("Deleting categories...");
     await prisma.category.deleteMany({});
 
-    log("Categories removed");
+    log.info("Categories removed");
   },
 };
 

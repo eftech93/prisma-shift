@@ -66,7 +66,7 @@ const migration: DataMigration = {
       },
     });
 
-    log(`Generating content fields for ${posts.length} posts...`);
+    log.info(`Generating content fields for ${posts.length} posts...`);
     let generatedCount = 0;
 
     for (const post of posts) {
@@ -87,7 +87,7 @@ const migration: DataMigration = {
       } catch (error: any) {
         // Handle potential slug collision
         if (error.code === "P2002") {
-          log(`Slug collision for "${post.title}", using fallback`);
+          log.info(`Slug collision for "${post.title}", using fallback`);
           await prisma.post.update({
             where: { id: post.id },
             data: {
@@ -103,14 +103,14 @@ const migration: DataMigration = {
       }
     }
 
-    log(`Generated content fields for ${generatedCount} posts`);
-    log("  - slugs: URL-friendly identifiers");
-    log("  - excerpts: Short previews");
-    log("  - readingTime: Estimated minutes");
+    log.info(`Generated content fields for ${generatedCount} posts`);
+    log.info("  - slugs: URL-friendly identifiers");
+    log.info("  - excerpts: Short previews");
+    log.info("  - readingTime: Estimated minutes");
   },
 
   async down({ prisma, log }: MigrationContext) {
-    log("Clearing generated content fields...");
+    log.info("Clearing generated content fields...");
     
     await prisma.post.updateMany({
       data: {
@@ -120,7 +120,7 @@ const migration: DataMigration = {
       },
     });
 
-    log("Content fields cleared");
+    log.info("Content fields cleared");
   },
 };
 

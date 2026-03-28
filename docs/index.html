@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prisma Shift - TypeScript Data Migrations for Prisma</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="description" content="TypeScript-based data migrations for Prisma. Run data transformations alongside your schema migrations with full type safety.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css">
+  <link rel="stylesheet" href="//unpkg.com/@fortawesome/fontawesome-free@6/css/all.min.css">
+  <style>
+    :root {
+      --theme-color: #2D3748;
+      --theme-color-secondary: #4A5568;
+      --accent-color: #5A67D8;
+    }
+    .sidebar {
+      background-color: #f7fafc;
+    }
+    .sidebar-nav a {
+      color: #4A5568;
+    }
+    .sidebar-nav a:hover {
+      color: #5A67D8;
+    }
+    .sidebar-nav li.active > a {
+      color: #5A67D8;
+      font-weight: 600;
+    }
+    .markdown-section h1 {
+      color: #2D3748;
+      border-bottom: 2px solid #5A67D8;
+      padding-bottom: 0.3em;
+    }
+    .markdown-section h2 {
+      color: #2D3748;
+      border-left: 4px solid #5A67D8;
+      padding-left: 0.5em;
+    }
+    .markdown-section h3 {
+      color: #4A5568;
+    }
+    .markdown-section code {
+      background-color: #edf2f7;
+      color: #2D3748;
+    }
+    .markdown-section pre {
+      background-color: #2D3748;
+    }
+    .markdown-section pre code {
+      background-color: transparent;
+      color: #e2e8f0;
+    }
+    .tip {
+      background-color: #ebf8ff;
+      border-left: 4px solid #4299e1;
+      padding: 12px;
+      margin: 1em 0;
+      border-radius: 4px;
+    }
+    .tip::before {
+      content: "💡 Tip: ";
+      font-weight: bold;
+      color: #2b6cb0;
+    }
+    .warn {
+      background-color: #fffaf0;
+      border-left: 4px solid #ed8936;
+      padding: 12px;
+      margin: 1em 0;
+      border-radius: 4px;
+    }
+    .warn::before {
+      content: "⚠️ Warning: ";
+      font-weight: bold;
+      color: #c05621;
+    }
+    .success {
+      background-color: #f0fff4;
+      border-left: 4px solid #48bb78;
+      padding: 12px;
+      margin: 1em 0;
+      border-radius: 4px;
+    }
+    .success::before {
+      content: "✅ Success: ";
+      font-weight: bold;
+      color: #276749;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.25em 0.4em;
+      font-size: 75%;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 0.375rem;
+    }
+    .badge-primary {
+      color: #fff;
+      background-color: #5A67D8;
+    }
+    .badge-success {
+      color: #fff;
+      background-color: #48bb78;
+    }
+    .badge-warning {
+      color: #1a202c;
+      background-color: #ed8936;
+    }
+    .badge-danger {
+      color: #fff;
+      background-color: #f56565;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      background-color: #edf2f7;
+      color: #2D3748;
+      font-weight: 600;
+      padding: 12px;
+      text-align: left;
+      border-bottom: 2px solid #cbd5e0;
+    }
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    tr:hover {
+      background-color: #f7fafc;
+    }
+    .test-pass {
+      color: #48bb78;
+      font-weight: bold;
+    }
+    .test-fail {
+      color: #f56565;
+      font-weight: bold;
+    }
+    .diagram {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+    .mermaid {
+      background: transparent !important;
+    }
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      name: 'Prisma Shift',
+      repo: 'https://github.com/eftech93/prisma-shift',
+      coverpage: true,
+      loadSidebar: true,
+      subMaxLevel: 3,
+      auto2top: true,
+      search: {
+        maxAge: 86400000,
+        paths: 'auto',
+        placeholder: 'Type to search',
+        noData: 'No Results!',
+        depth: 6,
+        hideOtherSidebarContent: false
+      },
+      pagination: {
+        previousText: 'Previous',
+        nextText: 'Next',
+        crossChapter: true,
+        crossChapterText: true
+      },
+      markdown: {
+        renderer: {
+          code: function(code, lang) {
+            if (lang === 'mermaid') {
+              return '<div class="mermaid">' + code + '</div>';
+            }
+            return this.origin.code.apply(this, arguments);
+          }
+        }
+      },
+      plugins: [
+        function(hook, vm) {
+          hook.ready(function() {
+            mermaid.initialize({
+              startOnLoad: false,
+              theme: 'default',
+              securityLevel: 'loose',
+              flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+              }
+            });
+          });
+          hook.doneEach(function() {
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+          });
+        }
+      ]
+    }
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.min.js"></script>
+</body>
+</html>
