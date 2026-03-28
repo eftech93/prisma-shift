@@ -2,10 +2,19 @@
 export * from "./types";
 export * from "./utils";
 export * from "./migration-runner";
-export { 
-  createMigrationExtension, 
-  withDataMigrations, 
-  createPrismaClientWithMigrations 
+export * from "./config";
+export * from "./logger";
+export * from "./lock";
+export * from "./hooks";
+export * from "./batch";
+export * from "./validation";
+export * from "./export";
+
+// Extension exports
+export {
+  createMigrationExtension,
+  withDataMigrations,
+  createPrismaClientWithMigrations,
 } from "./extension";
 
 // Default export for convenience

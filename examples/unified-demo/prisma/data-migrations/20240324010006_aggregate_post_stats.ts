@@ -27,11 +27,11 @@ const migration: DataMigration = {
     });
 
     if (totalPosts === 0) {
-      log("All posts already have stats");
+      log.info("All posts already have stats");
       return;
     }
 
-    log(`Aggregating stats for ${totalPosts} posts...`);
+    log.info(`Aggregating stats for ${totalPosts} posts...`);
 
     let processed = 0;
     let hasMore = true;
@@ -93,15 +93,15 @@ const migration: DataMigration = {
     }
 
     const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
-    log(`Stats aggregation complete! Processed ${processed} posts in ${totalTime}s`);
+    log.info(`Stats aggregation complete! Processed ${processed} posts in ${totalTime}s`);
   },
 
   async down({ prisma, log }: MigrationContext) {
-    log("Removing aggregated stats...");
+    log.info("Removing aggregated stats...");
     
     const result = await prisma.postStats.deleteMany({});
     
-    log(`Deleted ${result.count} stats records`);
+    log.info(`Deleted ${result.count} stats records`);
   },
 };
 

@@ -1,6 +1,6 @@
 {
   "name": "@eftech93/prisma-shift",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Prisma Client Extension for TypeScript-based data migrations",
   "keywords": [
     "prisma",
@@ -40,7 +40,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --ci --coverage --reporters=default --reporters=jest-junit",
+    "test:ci": "jest --ci --coverage --reporters=default --reporters=jest-junit && npm run sanitize-report",
+    "sanitize-report": "sed -i.bak 's|/Users/[^/]*/Desktop/EFTECH93/prisma-data-migration-client/||g' docs/test-report.html && rm -f docs/test-report.html.bak",
     "demo": "cd examples/unified-demo && npm install && npm start",
     "demo:up": "cd examples/unified-demo && npm run infra:up",
     "demo:migrate": "cd examples/unified-demo && npm run migrate",
@@ -58,6 +59,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "jest": "^30.3.0",
+    "jest-html-reporter": "^4.3.0",
     "jest-junit": "^16.0.0",
     "prisma": "^5.10.0",
     "ts-jest": "^29.4.6",

@@ -147,12 +147,19 @@ npx prisma-shift-migrate migrate deploy
 **Option B: Manual**
 
 ```bash
+# Run data migrations only
 npx prisma-shift run
+
+# Run schema + data migrations together
+npx prisma-shift run --with-schema
+
+# Wait for lock if another instance is running
+npx prisma-shift run --wait
 ```
 
 ## 🎓 Complete Example
 
-See the [unified-demo](./examples/unified-demo/) for a comprehensive example with **3 schema migrations** and **8 data migrations**:
+See the [unified-demo](./examples/unified-demo/) for a comprehensive example with **3 schema migrations** and **12 data migrations**:
 
 ```bash
 cd examples/unified-demo
@@ -161,18 +168,21 @@ cd examples/unified-demo
 docker-compose up -d
 
 # Install and run
-npm install && ./deploy.sh
+npm install && npm run migrate
 ```
 
 **The demo includes:**
 - **Docker Compose** - PostgreSQL + Adminer database UI
 - **3 Schema Migrations (SQL)** - Create tables and add columns
-- **8 Data Migrations (TypeScript)** - Transform data
+- **12 Data Migrations (TypeScript)** - Transform data
 - **JSON Data Loading** - Seed data from files
 - **Computed Fields** - Generate slugs, excerpts, reading times
 - **Large Dataset Processing** - Batch processing with progress
 - **Enum Migration** - Transform status values
 - **Multi-Table Sync** - Aggregate counts across tables
+- **Conditional Migrations** - Feature flag based execution
+- **Migration Dependencies** - Ensure proper ordering
+- **Long-running Migrations** - With timeout support
 
 [→ Full example documentation](./examples/unified-demo/)
 
@@ -240,8 +250,13 @@ const prisma = createPrismaClientWithMigrations({
 | `create <name>` | Create a new data migration |
 | `status` | Show migration status |
 | `run` | Run data migrations only |
+| `run --with-schema` | Run schema + data migrations |
+| `run --wait` | Wait for lock if another instance is running |
+| `run --dry-run` | Preview what would run |
+| `validate` | Validate migration files |
 | `rollback` | Rollback last migration |
 | `reset` | Clear migration records |
+| `export` | Export migration history |
 
 ### Prisma CLI Wrapper (Recommended)
 
@@ -304,8 +319,149 @@ set -e
 
 npx prisma migrate deploy   # Schema migrations
 npx prisma generate         # Generate client
-npx prisma-shift run # Data migrations
+npx prisma-shift run        # Data migrations
 npm start
+```
+
+### Option 3: With wait flag (for multi-instance deployments)
+
+```bash
+#!/bin/bash
+set -e
+
+# Use --wait to ensure only one instance runs migrations at a time
+npx prisma-shift run --with-schema --wait
+
+npm start
+```
+
+## Advanced Features
+
+### Conditional Migrations
+
+Run migrations only when conditions are met:
+
+```typescript
+const migration: DataMigration = {
+  id: "20240325120000_enable_feature_x",
+  name: "enable_feature_x",
+  
+  // Only run if condition is met
+  condition: async ({ prisma }) => {
+    const config = await prisma.config.findFirst();
+    return config?.featureXEnabled === true;
+  },
+  
+  async up({ prisma, log }) {
+    // Migration logic
+    log("Feature X is enabled, running migration...");
+  },
+};
+```
+
+### Migration Dependencies
+
+Ensure migrations run in the correct order:
+
+```typescript
+const migration: DataMigration = {
+  id: "20240325_add_user_stats",
+  name: "add_user_stats",
+  // Requires these schema migrations first
+  requiresSchema: ["20240324000002_add_categories"],
+  // And these data migrations
+  requiresData: ["20240324010003_setup_profiles"],
+  
+  async up({ prisma, log }) {
+    // Migration logic
+  },
+};
+```
+
+### Batch Processing
+
+Process large datasets efficiently:
+
+```typescript
+async up({ prisma, log, batch }: MigrationContext) {
+  await batch({
+    query: () => prisma.post.findMany({ where: { processed: false } }),
+    batchSize: 1000,
+    process: async (posts) => {
+      await prisma.post.updateMany({
+        where: { id: { in: posts.map(p => p.id) } },
+        data: { processed: true }
+      });
+    },
+    onProgress: (processed, total) => {
+      log(`Processed ${processed}/${total}`);
+    },
+  });
+}
+```
+
+### Long-Running Migrations
+
+For migrations that exceed transaction timeouts:
+
+```typescript
+const migration: DataMigration = {
+  id: "20240325_backfill_large_table",
+  name: "backfill_large_table",
+  
+  // Custom timeout (default: 0 = no timeout)
+  timeout: 300000, // 5 minutes
+  
+  // Disable transaction for very long operations
+  disableTransaction: true,
+  
+  async up({ prisma, log, signal }) {
+    // Check for cancellation
+    if (signal?.aborted) {
+      throw new Error("Migration was cancelled");
+    }
+    
+    // Long-running work...
+  },
+};
+```
+
+### Distributed Locking
+
+Prevent concurrent migrations in multi-instance deployments:
+
+```typescript
+const runner = new MigrationRunner(prisma, {
+  migrationsDir: "./migrations",
+  lock: {
+    enabled: true,
+    timeout: 30000,      // Lock expires after 30s
+    retryAttempts: 3,    // Retry 3 times
+    retryDelay: 1000,    // Wait 1s between retries
+  },
+});
+```
+
+Or use the `--wait` CLI flag to wait indefinitely:
+
+```bash
+npx prisma-shift run --wait
+```
+
+### Hooks
+
+Run scripts before/after migrations:
+
+```typescript
+// prisma-shift.config.ts
+export default {
+  hooks: {
+    beforeAll: "./scripts/backup.ts",    // Before any migration
+    beforeEach: "./scripts/notify.ts",   // Before each migration
+    afterEach: "./scripts/verify.ts",    // After each migration
+    afterAll: "./scripts/cleanup.ts",    // After all migrations
+  },
+};
 ```
 
 ## Common Patterns
@@ -341,20 +497,40 @@ while (hasMore) {
 
 ## Configuration
 
-```bash
-# Environment variables
-DATA_MIGRATIONS_DIR=./prisma/data-migrations
-DATA_MIGRATIONS_TABLE=_dataMigration
-```
+Create a `prisma-shift.config.ts` file:
 
 ```typescript
-// Options
-interface MigrationOptions {
-  migrationsDir: string;      // Migration files directory
-  migrationsTable?: string;   // History table (default: "_dataMigration")
-  schemaPath?: string;        // Prisma schema path
-  autoRun?: boolean;          // Auto-run on startup
-}
+export default {
+  migrationsDir: "./prisma/data-migrations",
+  migrationsTable: "_dataMigration",
+  schemaPath: "./prisma/schema.prisma",
+  logging: {
+    level: "info",      // silent, error, warn, info, debug
+    progress: true,     // Show progress bars
+    format: "text",     // text or json
+  },
+  lock: {
+    enabled: true,
+    timeout: 30000,
+    retryAttempts: 3,
+    retryDelay: 1000,
+  },
+  execution: {
+    timeout: 0,         // 0 = no timeout
+    transaction: true,  // Run in transaction by default
+  },
+  typescript: {
+    compiler: "tsx",    // tsx or ts-node
+    transpileOnly: true,
+  },
+};
+```
+
+### Environment Variables
+
+```bash
+DATA_MIGRATIONS_DIR=./prisma/data-migrations
+DATA_MIGRATIONS_TABLE=_dataMigration
 ```
 
 ## API Reference
@@ -368,6 +544,11 @@ interface DataMigration {
   createdAt: number;             // Timestamp
   up: (context: MigrationContext) => Promise<void>;
   down?: (context: MigrationContext) => Promise<void>;
+  condition?: (context: Pick<MigrationContext, "prisma" | "log">) => Promise<boolean>;
+  requiresSchema?: string[];     // Schema migration dependencies
+  requiresData?: string[];       // Data migration dependencies
+  timeout?: number;              // Custom timeout in ms (0 = none)
+  disableTransaction?: boolean;  // Run outside transaction
 }
 ```
 
@@ -376,8 +557,24 @@ interface DataMigration {
 ```typescript
 interface MigrationContext {
   prisma: PrismaClient;
-  log: (message: string) => void;
+  log: CallableLogger;  // log("msg") or log.info("msg")
+  batch: <T>(options: BatchOptions<T>) => Promise<BatchResult<T>>;
+  progress: (total: number) => ProgressTracker;
+  signal?: AbortSignal; // For cancellation/timeouts
 }
+```
+
+### CallableLogger
+
+The logger can be used as a function or with methods:
+
+```typescript
+// Both work:
+log("Simple message");           // Defaults to info level
+log.info("Info message");        // Explicit info level
+log.warn("Warning message");     // Warning level
+log.error("Error message");      // Error level
+log.debug("Debug message");      // Debug level
 ```
 
 ## Testing
@@ -397,7 +594,63 @@ npm run test:watch
 
 - [Prisma Integration](./docs/prisma-integration.md) - Integrate with Prisma CLI
 - [Workflow Guide](./docs/workflow.md) - Coordinating schema and data migrations
-- [Unified Demo](./examples/unified-demo/) - Complete example with 3 schema + 8 data migrations
+- [Unified Demo](./examples/unified-demo/) - Complete example with 3 schema + 12 data migrations
+
+## Release Notes
+
+### v0.0.2 (2026-03-28)
+
+**New Features:**
+
+- **🔒 Distributed Locking** - Prevent concurrent migrations across multiple instances with PostgreSQL advisory locks
+- **⏱️ Migration Timeouts** - Set custom timeouts per migration with automatic cancellation via AbortSignal
+- **🪝 Before/After Hooks** - Run scripts at various migration lifecycle stages (beforeAll, beforeEach, afterEach, afterAll)
+- **📦 Batch Processing Helper** - Process large datasets efficiently with automatic pagination and progress tracking
+- **🎯 Conditional Migrations** - Run migrations only when specific conditions are met (e.g., feature flags)
+- **🔗 Migration Dependencies** - Declare dependencies on other migrations to ensure correct execution order
+- **📊 Structured Logging** - Rich logging with multiple levels, progress indicators, and JSON format support
+- **📈 Progress Tracking** - Visual progress bars for long-running operations
+- **✅ Migration Validation** - Validate migration files before execution (check IDs, duplicates, TypeScript compilation)
+- **📤 Export Functionality** - Export migration history to JSON, CSV, or HTML formats
+- **⏳ Wait Flag (`--wait`)** - Wait for lock acquisition instead of failing immediately (great for multi-instance deployments)
+- **📦 With-Schema Flag (`--with-schema`)** - Run Prisma schema migrations before data migrations in one command
+- **🔧 Config File Support** - Configure via `prisma-shift.config.ts` file
+
+**Improvements:**
+
+- **Callable Logger API** - `log()` can be called as a function (`log("msg")`) or with methods (`log.info("msg")`)
+- **Transaction Control** - Option to disable transactions for long-running migrations
+- **Better Error Handling** - Clear error messages with migration context
+
+**Example Usage:**
+
+```bash
+# Run with schema migrations
+npx prisma-shift run --with-schema
+
+# Wait for lock (for multi-instance deployments)
+npx prisma-shift run --wait
+
+# Preview changes
+npx prisma-shift run --dry-run
+
+# Validate migrations
+npx prisma-shift validate
+
+# Export history
+npx prisma-shift export --format=json
+```
+
+### v0.0.1 (2024-03-24)
+
+**Initial Release:**
+
+- TypeScript-based data migrations
+- CLI commands (init, create, run, status, rollback, reset)
+- Prisma Client extension (`withDataMigrations`)
+- Generator integration for auto-run after schema migrations
+- Migration tracking in database
+- Rollback support
 
 ## License
 

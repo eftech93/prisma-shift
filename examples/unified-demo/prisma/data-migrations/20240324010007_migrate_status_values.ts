@@ -16,12 +16,12 @@ const migration: DataMigration = {
   async up({ prisma, log }: MigrationContext) {
     // In this demo, state values are already set correctly during seed
     // In a real scenario, this would map old status values to new state values
-    log("Status values already in correct format (DRAFT/PUBLISHED/ARCHIVED)");
-    log("Migration complete!");
+    log.info("Status values already in correct format (DRAFT/PUBLISHED/ARCHIVED)");
+    log.info("Migration complete!");
   },
 
   async down({ prisma, log }: MigrationContext) {
-    log("Rollback: no changes needed");
+    log.info("Rollback: no changes needed");
   },
 };
 

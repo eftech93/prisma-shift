@@ -1,37 +1,223 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="48" failures="0" errors="0" time="0.757">
-  <testsuite name="Utils" errors="0" failures="0" skipped="0" timestamp="2026-03-26T03:21:45" time="0.448" tests="9">
-    <testcase classname="Utils generateMigrationId should generate a valid migration ID with timestamp and sanitized name" name="Utils generateMigrationId should generate a valid migration ID with timestamp and sanitized name" time="0.002">
+<testsuites name="jest tests" tests="118" failures="0" errors="0" time="2.97">
+  <testsuite name="Validation" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:17" time="1.588" tests="2">
+    <testcase classname="Validation formatValidationResult should format valid result" name="Validation formatValidationResult should format valid result" time="0.01">
     </testcase>
-    <testcase classname="Utils generateMigrationId should handle special characters in name" name="Utils generateMigrationId should handle special characters in name" time="0">
-    </testcase>
-    <testcase classname="Utils generateMigrationId should handle multiple spaces and dashes" name="Utils generateMigrationId should handle multiple spaces and dashes" time="0">
-    </testcase>
-    <testcase classname="Utils ensureMigrationsDir should create directory if it does not exist" name="Utils ensureMigrationsDir should create directory if it does not exist" time="0">
-    </testcase>
-    <testcase classname="Utils ensureMigrationsDir should not create directory if it already exists" name="Utils ensureMigrationsDir should not create directory if it already exists" time="0">
-    </testcase>
-    <testcase classname="Utils generateMigrationTemplate should generate a valid migration template" name="Utils generateMigrationTemplate should generate a valid migration template" time="0.001">
-    </testcase>
-    <testcase classname="Utils loadMigrations should return empty array if directory does not exist" name="Utils loadMigrations should return empty array if directory does not exist" time="0">
-    </testcase>
-    <testcase classname="Utils loadMigrations should filter non-ts/js files" name="Utils loadMigrations should filter non-ts/js files" time="0.014">
-    </testcase>
-    <testcase classname="Utils loadMigrations should throw error for migration without required fields" name="Utils loadMigrations should throw error for migration without required fields" time="0.001">
+    <testcase classname="Validation formatValidationResult should format invalid result with errors" name="Validation formatValidationResult should format invalid result with errors" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="Extension" errors="0" failures="0" skipped="0" timestamp="2026-03-26T03:21:45" time="0.072" tests="4">
-    <testcase classname="Extension withDataMigrations should extend prisma client" name="Extension withDataMigrations should extend prisma client" time="0">
+  <testsuite name="Config" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:17" time="1.654" tests="8">
+    <testcase classname="Config loadConfig should return default config when no config file exists" name="Config loadConfig should return default config when no config file exists" time="0.025">
     </testcase>
-    <testcase classname="Extension withDataMigrations should pass a function to $extends" name="Extension withDataMigrations should pass a function to $extends" time="0.001">
+    <testcase classname="Config loadConfig should load JSON config file" name="Config loadConfig should load JSON config file" time="0.001">
     </testcase>
-    <testcase classname="Extension extension client methods should expose $dataMigrations methods on extended client" name="Extension extension client methods should expose $dataMigrations methods on extended client" time="0">
+    <testcase classname="Config loadConfig should merge user config with defaults" name="Config loadConfig should merge user config with defaults" time="0">
     </testcase>
-    <testcase classname="Extension extension client methods should call MigrationRunner methods through extension" name="Extension extension client methods should call MigrationRunner methods through extension" time="0">
+    <testcase classname="Config loadConfig should throw error for invalid JSON" name="Config loadConfig should throw error for invalid JSON" time="0.008">
+    </testcase>
+    <testcase classname="Config createSampleConfig should create a sample config file" name="Config createSampleConfig should create a sample config file" time="0.003">
+    </testcase>
+    <testcase classname="Config createSampleConfig should throw error if config already exists" name="Config createSampleConfig should throw error if config already exists" time="0.002">
+    </testcase>
+    <testcase classname="Config mergeConfig should override defaults with user values" name="Config mergeConfig should override defaults with user values" time="0">
+    </testcase>
+    <testcase classname="Config mergeConfig should deeply merge nested objects" name="Config mergeConfig should deeply merge nested objects" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="CLI" errors="0" failures="0" skipped="0" timestamp="2026-03-26T03:21:45" time="0.017" tests="10">
-    <testcase classname="CLI init command should create migrations directory" name="CLI init command should create migrations directory" time="0">
+  <testsuite name="Utils" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:17" time="1.6" tests="5">
+    <testcase classname="Utils generateMigrationId should generate ID with timestamp and name" name="Utils generateMigrationId should generate ID with timestamp and name" time="0.004">
+    </testcase>
+    <testcase classname="Utils generateMigrationId should handle name with spaces" name="Utils generateMigrationId should handle name with spaces" time="0.001">
+    </testcase>
+    <testcase classname="Utils generateMigrationId should handle name with special characters" name="Utils generateMigrationId should handle name with special characters" time="0">
+    </testcase>
+    <testcase classname="Utils generateMigrationTemplate should generate valid TypeScript template" name="Utils generateMigrationTemplate should generate valid TypeScript template" time="0.001">
+    </testcase>
+    <testcase classname="Utils ensureMigrationsDir should be defined" name="Utils ensureMigrationsDir should be defined" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Logger" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:17" time="1.819" tests="14">
+    <testcase classname="Logger ConsoleLogger should log messages at or above configured level" name="Logger ConsoleLogger should log messages at or above configured level" time="0.04">
+    </testcase>
+    <testcase classname="Logger ConsoleLogger should not log when level is silent" name="Logger ConsoleLogger should not log when level is silent" time="0.001">
+    </testcase>
+    <testcase classname="Logger ConsoleLogger should log errors with stack trace" name="Logger ConsoleLogger should log errors with stack trace" time="0">
+    </testcase>
+    <testcase classname="Logger ConsoleLogger should track migration start" name="Logger ConsoleLogger should track migration start" time="0">
+    </testcase>
+    <testcase classname="Logger ConsoleLogger should track migration end with success" name="Logger ConsoleLogger should track migration end with success" time="0">
+    </testcase>
+    <testcase classname="Logger ConsoleLogger should track migration end with failure" name="Logger ConsoleLogger should track migration end with failure" time="0">
+    </testcase>
+    <testcase classname="Logger ConsoleLogger should track migration errors" name="Logger ConsoleLogger should track migration errors" time="0.001">
+    </testcase>
+    <testcase classname="Logger ConsoleLogger should display batch progress" name="Logger ConsoleLogger should display batch progress" time="0.001">
+    </testcase>
+    <testcase classname="Logger ConsoleLogger should not display progress when progress is disabled" name="Logger ConsoleLogger should not display progress when progress is disabled" time="0.001">
+    </testcase>
+    <testcase classname="Logger ConsoleLogger should track lock events" name="Logger ConsoleLogger should track lock events" time="0">
+    </testcase>
+    <testcase classname="Logger ConsoleLogger should track hook events" name="Logger ConsoleLogger should track hook events" time="0">
+    </testcase>
+    <testcase classname="Logger createLogger should create ConsoleLogger for non-silent levels" name="Logger createLogger should create ConsoleLogger for non-silent levels" time="0">
+    </testcase>
+    <testcase classname="Logger createLogger should create SilentLogger for silent level" name="Logger createLogger should create SilentLogger for silent level" time="0">
+    </testcase>
+    <testcase classname="Logger createSilentLogger should not output anything" name="Logger createSilentLogger should not output anything" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Batch Processing" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:17" time="1.848" tests="16">
+    <testcase classname="Batch Processing batchProcess should process all items in batches" name="Batch Processing batchProcess should process all items in batches" time="0.005">
+    </testcase>
+    <testcase classname="Batch Processing batchProcess should collect errors without stopping" name="Batch Processing batchProcess should collect errors without stopping" time="0.001">
+    </testcase>
+    <testcase classname="Batch Processing batchProcess should handle empty result" name="Batch Processing batchProcess should handle empty result" time="0">
+    </testcase>
+    <testcase classname="Batch Processing batchProcess should use cursor for pagination" name="Batch Processing batchProcess should use cursor for pagination" time="0">
+    </testcase>
+    <testcase classname="Batch Processing batchProcess should apply delay between batches" name="Batch Processing batchProcess should apply delay between batches" time="0.111">
+    </testcase>
+    <testcase classname="Batch Processing batchProcessWithRetry should succeed on first attempt" name="Batch Processing batchProcessWithRetry should succeed on first attempt" time="0.001">
+    </testcase>
+    <testcase classname="Batch Processing batchProcessWithRetry should retry on failure" name="Batch Processing batchProcessWithRetry should retry on failure" time="0.024">
+    </testcase>
+    <testcase classname="Batch Processing estimateBatchSize should calculate batch size based on row size" name="Batch Processing estimateBatchSize should calculate batch size based on row size" time="0.001">
+    </testcase>
+    <testcase classname="Batch Processing estimateBatchSize should clamp to minimum of 100" name="Batch Processing estimateBatchSize should clamp to minimum of 100" time="0.001">
+    </testcase>
+    <testcase classname="Batch Processing estimateBatchSize should clamp to maximum of 10000" name="Batch Processing estimateBatchSize should clamp to maximum of 10000" time="0.001">
+    </testcase>
+    <testcase classname="Batch Processing createProgressTracker should track progress increments" name="Batch Processing createProgressTracker should track progress increments" time="0">
+    </testcase>
+    <testcase classname="Batch Processing createProgressTracker should set absolute value" name="Batch Processing createProgressTracker should set absolute value" time="0.002">
+    </testcase>
+    <testcase classname="Batch Processing createProgressTracker should call done" name="Batch Processing createProgressTracker should call done" time="0">
+    </testcase>
+    <testcase classname="Batch Processing streamProcess should process all items from stream" name="Batch Processing streamProcess should process all items from stream" time="0.001">
+    </testcase>
+    <testcase classname="Batch Processing streamProcess should respect limit" name="Batch Processing streamProcess should respect limit" time="0">
+    </testcase>
+    <testcase classname="Batch Processing streamProcess should call onProgress" name="Batch Processing streamProcess should call onProgress" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Lock" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:17" time="1.817" tests="14">
+    <testcase classname="Lock DatabaseLock should acquire lock using advisory lock" name="Lock DatabaseLock should acquire lock using advisory lock" time="0.009">
+    </testcase>
+    <testcase classname="Lock DatabaseLock should release lock using advisory unlock" name="Lock DatabaseLock should release lock using advisory unlock" time="0">
+    </testcase>
+    <testcase classname="Lock DatabaseLock should fall back to table-based lock when advisory locks not supported" name="Lock DatabaseLock should fall back to table-based lock when advisory locks not supported" time="0.013">
+    </testcase>
+    <testcase classname="Lock DatabaseLock should retry lock acquisition on failure" name="Lock DatabaseLock should retry lock acquisition on failure" time="0.026">
+    </testcase>
+    <testcase classname="Lock DatabaseLock should return false if lock cannot be acquired after retries" name="Lock DatabaseLock should return false if lock cannot be acquired after retries" time="0.01">
+    </testcase>
+    <testcase classname="Lock DatabaseLock should track if lock is held" name="Lock DatabaseLock should track if lock is held" time="0.001">
+    </testcase>
+    <testcase classname="Lock DatabaseLock should extend lock timeout" name="Lock DatabaseLock should extend lock timeout" time="0.001">
+    </testcase>
+    <testcase classname="Lock DatabaseLock should return true if already held when acquiring" name="Lock DatabaseLock should return true if already held when acquiring" time="0.004">
+    </testcase>
+    <testcase classname="Lock NoopLock should always acquire successfully" name="Lock NoopLock should always acquire successfully" time="0.001">
+    </testcase>
+    <testcase classname="Lock NoopLock should always report as held" name="Lock NoopLock should always report as held" time="0">
+    </testcase>
+    <testcase classname="Lock NoopLock should release without error" name="Lock NoopLock should release without error" time="0.001">
+    </testcase>
+    <testcase classname="Lock NoopLock should extend without error" name="Lock NoopLock should extend without error" time="0">
+    </testcase>
+    <testcase classname="Lock createLock should create DatabaseLock when enabled" name="Lock createLock should create DatabaseLock when enabled" time="0">
+    </testcase>
+    <testcase classname="Lock createLock should create NoopLock when disabled" name="Lock createLock should create NoopLock when disabled" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Extension" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:17" time="1.877" tests="4">
+    <testcase classname="Extension createMigrationExtension should create extension with options" name="Extension createMigrationExtension should create extension with options" time="0.005">
+    </testcase>
+    <testcase classname="Extension withDataMigrations should extend Prisma client" name="Extension withDataMigrations should extend Prisma client" time="0.001">
+    </testcase>
+    <testcase classname="Extension withDataMigrations should use provided migrations dir" name="Extension withDataMigrations should use provided migrations dir" time="0">
+    </testcase>
+    <testcase classname="Extension createPrismaClientWithMigrations should throw if PrismaClient not found" name="Extension createPrismaClientWithMigrations should throw if PrismaClient not found" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Export" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:17" time="1.878" tests="11">
+    <testcase classname="Export exportMigrations should export to JSON format" name="Export exportMigrations should export to JSON format" time="0.004">
+    </testcase>
+    <testcase classname="Export exportMigrations should export to CSV format" name="Export exportMigrations should export to CSV format" time="0.001">
+    </testcase>
+    <testcase classname="Export exportMigrations should export to HTML format" name="Export exportMigrations should export to HTML format" time="0.001">
+    </testcase>
+    <testcase classname="Export exportMigrations should throw error for unsupported format" name="Export exportMigrations should throw error for unsupported format" time="0.023">
+    </testcase>
+    <testcase classname="Export exportMigrations should include formatted duration" name="Export exportMigrations should include formatted duration" time="0.001">
+    </testcase>
+    <testcase classname="Export formatDuration should format milliseconds" name="Export formatDuration should format milliseconds" time="0.001">
+    </testcase>
+    <testcase classname="Export formatDuration should format seconds" name="Export formatDuration should format seconds" time="0.001">
+    </testcase>
+    <testcase classname="Export formatDuration should format minutes and seconds" name="Export formatDuration should format minutes and seconds" time="0">
+    </testcase>
+    <testcase classname="Export formatDuration should format hours and minutes" name="Export formatDuration should format hours and minutes" time="0">
+    </testcase>
+    <testcase classname="Export writeExport should return content when no output path specified" name="Export writeExport should return content when no output path specified" time="0">
+    </testcase>
+    <testcase classname="Export writeExport should write to file when output path specified" name="Export writeExport should write to file when output path specified" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="MigrationRunner" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:19" time="0.354" tests="12">
+    <testcase classname="MigrationRunner ensureMigrationsTable should create table if it does not exist" name="MigrationRunner ensureMigrationsTable should create table if it does not exist" time="0.001">
+    </testcase>
+    <testcase classname="MigrationRunner ensureMigrationsTable should not create table if it already exists" name="MigrationRunner ensureMigrationsTable should not create table if it already exists" time="0.001">
+    </testcase>
+    <testcase classname="MigrationRunner getExecutedMigrations should return executed migrations" name="MigrationRunner getExecutedMigrations should return executed migrations" time="0">
+    </testcase>
+    <testcase classname="MigrationRunner getExecutedMigrations should return empty array if no migrations" name="MigrationRunner getExecutedMigrations should return empty array if no migrations" time="0">
+    </testcase>
+    <testcase classname="MigrationRunner getStatus should return correct status with pending and executed migrations" name="MigrationRunner getStatus should return correct status with pending and executed migrations" time="0">
+    </testcase>
+    <testcase classname="MigrationRunner runMigrations should execute pending migrations" name="MigrationRunner runMigrations should execute pending migrations" time="0.003">
+    </testcase>
+    <testcase classname="MigrationRunner runMigrations should stop on first failure" name="MigrationRunner runMigrations should stop on first failure" time="0.006">
+    </testcase>
+    <testcase classname="MigrationRunner runMigrations should return success if no pending migrations" name="MigrationRunner runMigrations should return success if no pending migrations" time="0.006">
+    </testcase>
+    <testcase classname="MigrationRunner rollbackLast should rollback the last executed migration" name="MigrationRunner rollbackLast should rollback the last executed migration" time="0.008">
+    </testcase>
+    <testcase classname="MigrationRunner rollbackLast should return false if no migrations to rollback" name="MigrationRunner rollbackLast should return false if no migrations to rollback" time="0.001">
+    </testcase>
+    <testcase classname="MigrationRunner rollbackLast should return false if migration has no down function" name="MigrationRunner rollbackLast should return false if migration has no down function" time="0.001">
+    </testcase>
+    <testcase classname="MigrationRunner reset should clear all migration records" name="MigrationRunner reset should clear all migration records" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Integration Tests" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:19" time="0.318" tests="9">
+    <testcase classname="Integration Tests MigrationRunner end-to-end flow should create migration table and run migrations" name="Integration Tests MigrationRunner end-to-end flow should create migration table and run migrations" time="0.004">
+    </testcase>
+    <testcase classname="Integration Tests MigrationRunner end-to-end flow should run multiple migrations in sequence" name="Integration Tests MigrationRunner end-to-end flow should run multiple migrations in sequence" time="0.002">
+    </testcase>
+    <testcase classname="Integration Tests MigrationRunner end-to-end flow should skip already executed migrations" name="Integration Tests MigrationRunner end-to-end flow should skip already executed migrations" time="0.001">
+    </testcase>
+    <testcase classname="Integration Tests MigrationRunner end-to-end flow should stop on first failure and not execute subsequent migrations" name="Integration Tests MigrationRunner end-to-end flow should stop on first failure and not execute subsequent migrations" time="0">
+    </testcase>
+    <testcase classname="Integration Tests MigrationRunner end-to-end flow should support rollback with down function" name="Integration Tests MigrationRunner end-to-end flow should support rollback with down function" time="0.001">
+    </testcase>
+    <testcase classname="Integration Tests MigrationRunner end-to-end flow should return false when rolling back migration without down function" name="Integration Tests MigrationRunner end-to-end flow should return false when rolling back migration without down function" time="0.001">
+    </testcase>
+    <testcase classname="Integration Tests MigrationRunner end-to-end flow should reset all migration records" name="Integration Tests MigrationRunner end-to-end flow should reset all migration records" time="0">
+    </testcase>
+    <testcase classname="Integration Tests MigrationContext should provide prisma client and log function to migrations" name="Integration Tests MigrationContext should provide prisma client and log function to migrations" time="0">
+    </testcase>
+    <testcase classname="Integration Tests Transaction handling should run migrations inside transactions" name="Integration Tests Transaction handling should run migrations inside transactions" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Generator" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:17" time="1.934" tests="2">
+    <testcase classname="Generator should have generator entry point" name="Generator should have generator entry point" time="0.215">
+    </testcase>
+    <testcase classname="Generator should export generator handler" name="Generator should export generator handler" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="CLI" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:19" time="0.3" tests="10">
+    <testcase classname="CLI init command should create migrations directory" name="CLI init command should create migrations directory" time="0.002">
     </testcase>
     <testcase classname="CLI create command should generate migration file with correct naming" name="CLI create command should generate migration file with correct naming" time="0">
     </testcase>
@@ -43,69 +229,39 @@
     </testcase>
     <testcase classname="CLI rollback command should rollback last migration" name="CLI rollback command should rollback last migration" time="0">
     </testcase>
-    <testcase classname="CLI rollback command should return false if no migrations to rollback" name="CLI rollback command should return false if no migrations to rollback" time="0">
+    <testcase classname="CLI rollback command should return false if no migrations to rollback" name="CLI rollback command should return false if no migrations to rollback" time="0.001">
     </testcase>
     <testcase classname="CLI environment variables should use DATA_MIGRATIONS_DIR from environment" name="CLI environment variables should use DATA_MIGRATIONS_DIR from environment" time="0">
     </testcase>
     <testcase classname="CLI environment variables should use DATA_MIGRATIONS_TABLE from environment" name="CLI environment variables should use DATA_MIGRATIONS_TABLE from environment" time="0">
     </testcase>
-    <testcase classname="CLI error handling should exit with error code on migration failure" name="CLI error handling should exit with error code on migration failure" time="0.003">
+    <testcase classname="CLI error handling should exit with error code on migration failure" name="CLI error handling should exit with error code on migration failure" time="0.008">
     </testcase>
   </testsuite>
-  <testsuite name="Integration Tests" errors="0" failures="0" skipped="0" timestamp="2026-03-26T03:21:45" time="0.043" tests="9">
-    <testcase classname="Integration Tests MigrationRunner end-to-end flow should create migration table and run migrations" name="Integration Tests MigrationRunner end-to-end flow should create migration table and run migrations" time="0">
-    </testcase>
-    <testcase classname="Integration Tests MigrationRunner end-to-end flow should run multiple migrations in sequence" name="Integration Tests MigrationRunner end-to-end flow should run multiple migrations in sequence" time="0.001">
-    </testcase>
-    <testcase classname="Integration Tests MigrationRunner end-to-end flow should skip already executed migrations" name="Integration Tests MigrationRunner end-to-end flow should skip already executed migrations" time="0">
-    </testcase>
-    <testcase classname="Integration Tests MigrationRunner end-to-end flow should stop on first failure and not execute subsequent migrations" name="Integration Tests MigrationRunner end-to-end flow should stop on first failure and not execute subsequent migrations" time="0">
-    </testcase>
-    <testcase classname="Integration Tests MigrationRunner end-to-end flow should support rollback with down function" name="Integration Tests MigrationRunner end-to-end flow should support rollback with down function" time="0">
-    </testcase>
-    <testcase classname="Integration Tests MigrationRunner end-to-end flow should return false when rolling back migration without down function" name="Integration Tests MigrationRunner end-to-end flow should return false when rolling back migration without down function" time="0">
-    </testcase>
-    <testcase classname="Integration Tests MigrationRunner end-to-end flow should reset all migration records" name="Integration Tests MigrationRunner end-to-end flow should reset all migration records" time="0.001">
-    </testcase>
-    <testcase classname="Integration Tests MigrationContext should provide prisma client and log function to migrations" name="Integration Tests MigrationContext should provide prisma client and log function to migrations" time="0">
-    </testcase>
-    <testcase classname="Integration Tests Transaction handling should run migrations inside transactions" name="Integration Tests Transaction handling should run migrations inside transactions" time="0">
-    </testcase>
-  </testsuite>
-  <testsuite name="MigrationRunner" errors="0" failures="0" skipped="0" timestamp="2026-03-26T03:21:45" time="0.04" tests="12">
-    <testcase classname="MigrationRunner ensureMigrationsTable should create table if it does not exist" name="MigrationRunner ensureMigrationsTable should create table if it does not exist" time="0">
-    </testcase>
-    <testcase classname="MigrationRunner ensureMigrationsTable should not create table if it already exists" name="MigrationRunner ensureMigrationsTable should not create table if it already exists" time="0">
-    </testcase>
-    <testcase classname="MigrationRunner getExecutedMigrations should return executed migrations" name="MigrationRunner getExecutedMigrations should return executed migrations" time="0">
-    </testcase>
-    <testcase classname="MigrationRunner getExecutedMigrations should return empty array if no migrations" name="MigrationRunner getExecutedMigrations should return empty array if no migrations" time="0">
-    </testcase>
-    <testcase classname="MigrationRunner getStatus should return correct status with pending and executed migrations" name="MigrationRunner getStatus should return correct status with pending and executed migrations" time="0">
-    </testcase>
-    <testcase classname="MigrationRunner runMigrations should execute pending migrations" name="MigrationRunner runMigrations should execute pending migrations" time="0">
-    </testcase>
-    <testcase classname="MigrationRunner runMigrations should stop on first failure" name="MigrationRunner runMigrations should stop on first failure" time="0">
-    </testcase>
-    <testcase classname="MigrationRunner runMigrations should return success if no pending migrations" name="MigrationRunner runMigrations should return success if no pending migrations" time="0.001">
-    </testcase>
-    <testcase classname="MigrationRunner rollbackLast should rollback the last executed migration" name="MigrationRunner rollbackLast should rollback the last executed migration" time="0">
-    </testcase>
-    <testcase classname="MigrationRunner rollbackLast should return false if no migrations to rollback" name="MigrationRunner rollbackLast should return false if no migrations to rollback" time="0">
-    </testcase>
-    <testcase classname="MigrationRunner rollbackLast should return false if migration has no down function" name="MigrationRunner rollbackLast should return false if migration has no down function" time="0">
-    </testcase>
-    <testcase classname="MigrationRunner reset should clear all migration records" name="MigrationRunner reset should clear all migration records" time="0">
-    </testcase>
-  </testsuite>
-  <testsuite name="Types" errors="0" failures="0" skipped="0" timestamp="2026-03-26T03:21:45" time="0.008" tests="4">
+  <testsuite name="Types" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:19" time="0.111" tests="4">
     <testcase classname="Types DataMigration interface should accept valid migration object" name="Types DataMigration interface should accept valid migration object" time="0">
     </testcase>
-    <testcase classname="Types DataMigration interface should accept migration without optional down function" name="Types DataMigration interface should accept migration without optional down function" time="0">
+    <testcase classname="Types DataMigration interface should accept migration without optional down function" name="Types DataMigration interface should accept migration without optional down function" time="0.001">
     </testcase>
-    <testcase classname="Types MigrationRecord interface should accept valid migration record" name="Types MigrationRecord interface should accept valid migration record" time="0.001">
+    <testcase classname="Types MigrationRecord interface should accept valid migration record" name="Types MigrationRecord interface should accept valid migration record" time="0">
     </testcase>
     <testcase classname="Types MigrationContext interface should have required properties" name="Types MigrationContext interface should have required properties" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="HookManager" errors="0" failures="0" skipped="0" timestamp="2026-03-28T05:07:19" time="0.165" tests="7">
+    <testcase classname="HookManager constructor should initialize with empty hooks" name="HookManager constructor should initialize with empty hooks" time="0">
+    </testcase>
+    <testcase classname="HookManager constructor should initialize with all hooks" name="HookManager constructor should initialize with all hooks" time="0.001">
+    </testcase>
+    <testcase classname="HookManager runBeforeAll should do nothing if no hook configured" name="HookManager runBeforeAll should do nothing if no hook configured" time="0">
+    </testcase>
+    <testcase classname="HookManager runBeforeAll should skip hook if script not found" name="HookManager runBeforeAll should skip hook if script not found" time="0.005">
+    </testcase>
+    <testcase classname="HookManager runBeforeEach should do nothing if no hook configured" name="HookManager runBeforeEach should do nothing if no hook configured" time="0">
+    </testcase>
+    <testcase classname="HookManager runAfterEach should do nothing if no hook configured" name="HookManager runAfterEach should do nothing if no hook configured" time="0">
+    </testcase>
+    <testcase classname="HookManager runAfterAll should do nothing if no hook configured" name="HookManager runAfterAll should do nothing if no hook configured" time="0">
     </testcase>
   </testsuite>
 </testsuites>

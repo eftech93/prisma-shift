@@ -5,13 +5,11 @@ yarn.lock
 pnpm-lock.yaml
 
 # Build output
-dist/
 *.js
 *.js.map
 *.d.ts
 *.d.ts.map
-!dist/*.js
-!dist/*.d.ts
+!jest.config.js
 
 # Test coverage
 coverage/
@@ -45,4 +43,3 @@ prisma/migrations/
 *.db
 *.db-journal
 node_modules/
-dist/

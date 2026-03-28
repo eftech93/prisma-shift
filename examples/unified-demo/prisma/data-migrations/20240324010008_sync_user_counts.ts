@@ -18,7 +18,7 @@ const migration: DataMigration = {
 
   async up({ prisma, log }: MigrationContext) {
     // Get all users with their post counts
-    log("Calculating post counts per user...");
+    log.info("Calculating post counts per user...");
     
     const users = await prisma.user.findMany({
       select: {
@@ -35,7 +35,7 @@ const migration: DataMigration = {
       },
     });
 
-    log(`Syncing post counts for ${users.length} users...`);
+    log.info(`Syncing post counts for ${users.length} users...`);
 
     let synced = 0;
     for (const user of users) {
@@ -57,7 +57,7 @@ const migration: DataMigration = {
       }
     }
 
-    log(`Synced ${synced} users (out of ${users.length})`);
+    log.info(`Synced ${synced} users (out of ${users.length})`);
     
     // Show summary
     const stats = await prisma.user.groupBy({
@@ -66,16 +66,16 @@ const migration: DataMigration = {
       _count: { id: true },
     });
 
-    log("\nPost count summary by role:");
+    log.info("\nPost count summary by role:");
     for (const stat of stats) {
       const total = stat._sum.postCount || 0;
       const users = stat._count.id;
       const avg = users > 0 ? (total / users).toFixed(1) : "0";
-      log(`  ${stat.role}: ${total} posts across ${users} users (avg ${avg}/user)`);
+      log.info(`  ${stat.role}: ${total} posts across ${users} users (avg ${avg}/user)`);
     }
 
     // Find users with mismatched counts (data quality check)
-    log("\nChecking for data inconsistencies...");
+    log.info("\nChecking for data inconsistencies...");
     const allUsers = await prisma.user.findMany({
       include: {
         _count: { select: { posts: true } },
@@ -86,20 +86,20 @@ const migration: DataMigration = {
     for (const user of allUsers) {
       if (user.postCount !== user._count.posts) {
         inconsistencies++;
-        log(`  WARNING: User ${user.id} has ${user.postCount} count but ${user._count.posts} posts`);
+        log.info(`  WARNING: User ${user.id} has ${user.postCount} count but ${user._count.posts} posts`);
       }
     }
 
     if (inconsistencies === 0) {
-      log("  ✓ All counts are consistent");
+      log.info("  ✓ All counts are consistent");
     } else {
-      log(`  ⚠ Found ${inconsistencies} inconsistencies`);
+      log.info(`  ⚠ Found ${inconsistencies} inconsistencies`);
     }
   },
 
   async down({ log }: MigrationContext) {
-    log("Note: User counts will be recalculated on next sync");
-    log("To reset: Run a migration to set all postCount to 0");
+    log.info("Note: User counts will be recalculated on next sync");
+    log.info("To reset: Run a migration to set all postCount to 0");
   },
 };
 

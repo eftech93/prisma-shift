@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 
-import { Command } from "commander";
+import { Command, Option } from "commander";
 import * as fs from "fs";
 import * as path from "path";
 import { spawn } from "child_process";
 import { MigrationRunner } from "./migration-runner";
+import { loadConfig, createSampleConfig, Config } from "./config";
+import { createLogger } from "./logger";
+import { validateMigrations, formatValidationResult } from "./validation";
+import { writeExport } from "./export";
 import { 
   generateMigrationId, 
   generateMigrationTemplate, 
@@ -34,25 +38,15 @@ function runCommand(command: string, args: string[]): Promise<void> {
   });
 }
 
-const program = new Command();
-
-program
-  .name("prisma-shift")
-  .description("CLI for managing Prisma data migrations")
-  .version("0.1.0");
-
 // Helper to load Prisma client dynamically
 async function getPrismaClient(): Promise<PrismaClient> {
-  // Try to find prisma client - prefer cwd's version first
   let PrismaClientClass: any;
   
   try {
-    // Try cwd first (for local development/linked packages)
     const cwdModule = await import(path.join(process.cwd(), "node_modules/@prisma/client"));
     PrismaClientClass = cwdModule.PrismaClient;
   } catch {
     try {
-      // Fall back to regular import
       const prismaModule = await import("@prisma/client");
       PrismaClientClass = (prismaModule as any).PrismaClient;
     } catch {
@@ -64,41 +58,61 @@ async function getPrismaClient(): Promise<PrismaClient> {
   return new PrismaClientClass();
 }
 
-// Helper to get migrations directory
-function getMigrationsDir(): string {
-  const envDir = process.env.DATA_MIGRATIONS_DIR;
-  if (envDir) return envDir;
+// Helper to load config and create runner
+async function createRunner(options: any): Promise<{ runner: MigrationRunner; config: Config }> {
+  const config = await loadConfig(process.cwd());
   
-  // Check common locations
-  const candidates = [
-    "./prisma/data-migrations",
-    "./src/data-migrations",
-    "./migrations/data",
-    "./data-migrations",
-  ];
+  // Override config with CLI options
+  if (options.dir) config.migrationsDir = options.dir;
+  if (options.table) config.migrationsTable = options.table;
+  if (options.logLevel) config.logging = { ...config.logging, level: options.logLevel };
+  if (options.noProgress) config.logging = { ...config.logging, progress: false };
   
-  for (const dir of candidates) {
-    if (fs.existsSync(dir)) {
-      return dir;
-    }
-  }
+  const prisma = await getPrismaClient();
   
-  return "./prisma/data-migrations";
+  const logger = createLogger({
+    level: config.logging?.level || "info",
+    progress: config.logging?.progress ?? true,
+  });
+  
+  const runner = new MigrationRunner(prisma, {
+    migrationsDir: config.migrationsDir,
+    migrationsTable: config.migrationsTable,
+    logger,
+    config,
+  });
+  
+  return { runner, config };
 }
 
-// Helper to get migrations table name
-function getMigrationsTable(): string {
-  return process.env.DATA_MIGRATIONS_TABLE || "_dataMigration";
-}
+const program = new Command();
+
+program
+  .name("prisma-shift")
+  .description("CLI for managing Prisma data migrations")
+  .version("0.1.0")
+  .option("-d, --dir <directory>", "Migrations directory")
+  .option("-t, --table <table>", "Migrations table name")
+  .option("--log-level <level>", "Log level (silent, error, warn, info, debug)", "info")
+  .option("--no-progress", "Disable progress indicators");
 
 program
   .command("init")
   .description("Initialize data migrations in your project")
-  .option("-d, --dir <directory>", "Migrations directory")
-  .action(async (options: { dir?: string }) => {
-    const migrationsDir = options.dir || "./prisma/data-migrations";
+  .option("--config", "Create a config file", false)
+  .action(async (options) => {
+    const migrationsDir = program.opts().dir || "./prisma/data-migrations";
     
     ensureMigrationsDir(migrationsDir);
+    
+    if (options.config) {
+      try {
+        const configPath = createSampleConfig(process.cwd());
+        console.log(`✓ Created config file: ${configPath}`);
+      } catch (error) {
+        console.log(`⚠ Config file already exists`);
+      }
+    }
     
     console.log("✓ Initialized data migrations");
     console.log(`  Directory: ${migrationsDir}`);
@@ -115,7 +129,7 @@ program
   .argument("<name>", "Name of the migration (e.g., 'add_user_preferences')")
   .option("-d, --dir <directory>", "Migrations directory")
   .action(async (name: string, options: { dir?: string }) => {
-    const migrationsDir = options.dir || getMigrationsDir();
+    const migrationsDir = options.dir || (await loadConfig()).migrationsDir;
     ensureMigrationsDir(migrationsDir);
     
     const id = generateMigrationId(name);
@@ -132,134 +146,138 @@ program
 program
   .command("status")
   .description("Show migration status")
-  .option("-d, --dir <directory>", "Migrations directory")
-  .option("-t, --table <table>", "Migrations table name")
-  .action(async (options: { dir?: string; table?: string }) => {
-    const prisma = await getPrismaClient();
-    const migrationsDir = options.dir || getMigrationsDir();
-    const migrationsTable = options.table || getMigrationsTable();
+  .action(async () => {
+    const { runner } = await createRunner(program.opts());
     
-    try {
-      const runner = new MigrationRunner(prisma, {
-        migrationsDir,
-        migrationsTable,
-      });
+    const status = await runner.getStatus();
+    
+    console.log("\n📊 Migration Status\n");
+    console.log(`Migrations directory: ${(await loadConfig()).migrationsDir}`);
+    console.log(`Migrations table: ${(await loadConfig()).migrationsTable}`);
+    console.log("");
+    
+    if (status.all.length === 0) {
+      console.log("No migrations found.");
+    } else {
+      console.log(`${"ID".padEnd(30)} ${"NAME".padEnd(30)} ${"STATUS"}`);
+      console.log("-".repeat(80));
       
-      const status = await runner.getStatus();
-      
-      console.log("\n📊 Migration Status\n");
-      console.log(`Migrations directory: ${migrationsDir}`);
-      console.log(`Migrations table: ${migrationsTable}`);
-      console.log("");
-      
-      if (status.all.length === 0) {
-        console.log("No migrations found.");
-      } else {
-        console.log(`${"ID".padEnd(30)} ${"NAME".padEnd(30)} ${"STATUS"}`);
-        console.log("-".repeat(80));
-        
-        for (const m of status.all) {
-          const icon = m.status === "executed" ? "✓" : "○";
-          const statusStr = m.status === "executed" 
-            ? `executed (${m.executedAt?.toISOString().slice(0, 16)})` 
-            : "pending";
-          console.log(`${m.id.padEnd(30)} ${m.name.slice(0, 28).padEnd(30)} ${icon} ${statusStr}`);
-        }
+      for (const m of status.all) {
+        const icon = m.status === "executed" ? "✓" : "○";
+        const statusStr = m.status === "executed" 
+          ? `executed (${m.executedAt?.toISOString().slice(0, 16)})` 
+          : "pending";
+        console.log(`${m.id.padEnd(30)} ${m.name.slice(0, 28).padEnd(30)} ${icon} ${statusStr}`);
       }
-      
-      console.log("");
-      console.log(`Total: ${status.executed.length} executed, ${status.pending.length} pending`);
-      console.log("");
-    } finally {
-      await prisma.$disconnect();
     }
+    
+    console.log("");
+    console.log(`Total: ${status.executed.length} executed, ${status.pending.length} pending`);
+    console.log("");
   });
 
 program
   .command("run")
   .description("Run pending migrations")
-  .option("-d, --dir <directory>", "Migrations directory")
-  .option("-t, --table <table>", "Migrations table name")
-  .action(async (options: { dir?: string; table?: string }) => {
-    const prisma = await getPrismaClient();
-    const migrationsDir = options.dir || getMigrationsDir();
-    const migrationsTable = options.table || getMigrationsTable();
-    
-    try {
-      const runner = new MigrationRunner(prisma, {
-        migrationsDir,
-        migrationsTable,
-      });
-      
-      const result = await runner.runMigrations();
-      
-      if (!result.success) {
-        console.error(`\n✗ Migration failed at: ${result.failedMigration}`);
-        if (result.error) {
-          console.error(`Error: ${result.error.message}`);
-        }
+  .option("--dry-run", "Show what would run without executing", false)
+  .option("--with-schema", "Run Prisma schema migrations first, then data migrations", false)
+  .option("--wait", "Wait for lock if another instance is running migrations", false)
+  .action(async (options) => {
+    // Run schema migrations first if requested
+    if (options.withSchema) {
+      console.log("📦 Running Prisma schema migrations...\n");
+      try {
+        await runCommand("npx", ["prisma", "migrate", "deploy"]);
+        console.log("\n✓ Schema migrations complete\n");
+      } catch (error) {
+        console.error("\n✗ Schema migrations failed");
         process.exit(1);
       }
-    } finally {
-      await prisma.$disconnect();
+    }
+    
+    const { runner } = await createRunner(program.opts());
+    
+    const result = await runner.runMigrations({ dryRun: options.dryRun, waitForLock: options.wait });
+    
+    if (!result.success) {
+      console.error(`\n✗ Migration failed at: ${result.failedMigration}`);
+      if (result.error) {
+        console.error(`Error: ${result.error.message}`);
+      }
+      process.exit(1);
+    }
+    
+    if (options.dryRun) {
+      console.log("\n[DRY RUN] No changes were made.");
+    }
+    
+    if (result.metrics) {
+      console.log(`\nTotal time: ${result.metrics.totalTime}ms`);
+      console.log(`Migrations run: ${result.metrics.migrationsRun}`);
+    }
+  });
+
+program
+  .command("validate")
+  .description("Validate migration files")
+  .action(async () => {
+    const config = await loadConfig();
+    const prisma = await getPrismaClient();
+    
+    const tempRunner = new MigrationRunner(prisma, {
+      migrationsDir: config.migrationsDir,
+      migrationsTable: config.migrationsTable,
+    });
+    
+    const executed = await tempRunner.getExecutedMigrations();
+    const result = await validateMigrations(config.migrationsDir, executed, {
+      typescript: config.typescript,
+    });
+    
+    console.log(formatValidationResult(result));
+    
+    if (!result.valid) {
+      process.exit(1);
     }
   });
 
 program
   .command("rollback")
   .description("Rollback the last executed migration")
-  .option("-d, --dir <directory>", "Migrations directory")
-  .option("-t, --table <table>", "Migrations table name")
-  .action(async (options: { dir?: string; table?: string }) => {
-    const prisma = await getPrismaClient();
-    const migrationsDir = options.dir || getMigrationsDir();
-    const migrationsTable = options.table || getMigrationsTable();
+  .action(async () => {
+    const { runner } = await createRunner(program.opts());
     
-    try {
-      const runner = new MigrationRunner(prisma, {
-        migrationsDir,
-        migrationsTable,
-      });
-      
-      const success = await runner.rollbackLast();
-      process.exit(success ? 0 : 1);
-    } finally {
-      await prisma.$disconnect();
-    }
+    const success = await runner.rollbackLast();
+    process.exit(success ? 0 : 1);
   });
 
 program
   .command("reset")
   .description("Reset all migration records (DANGER: does not rollback, just clears records)")
-  .option("-t, --table <table>", "Migrations table name")
-  .action(async (options: { table?: string }) => {
-    const prisma = await getPrismaClient();
-    const migrationsTable = options.table || getMigrationsTable();
-    
-    console.log("⚠️  This will clear all migration records but won't rollback any data changes.");
-    console.log("   Make sure you know what you're doing!\n");
-    
-    try {
-      const runner = new MigrationRunner(prisma, {
-        migrationsDir: getMigrationsDir(),
-        migrationsTable,
-      });
-      
-      await runner.reset();
-    } finally {
-      await prisma.$disconnect();
+  .option("-f, --force", "Skip confirmation", false)
+  .action(async (options) => {
+    if (!options.force) {
+      console.log("⚠️  This will clear all migration records but won't rollback any data changes.");
+      console.log("   Use --force to skip this confirmation.");
+      process.exit(1);
     }
+    
+    const { runner } = await createRunner(program.opts());
+    await runner.reset();
   });
 
 program
   .command("deploy")
   .description("Deploy all migrations (schema + data) in one command")
-  .option("-d, --dir <directory>", "Data migrations directory")
-  .option("-t, --table <table>", "Migrations table name")
   .option("--schema <path>", "Path to Prisma schema file")
-  .action(async (options: { dir?: string; table?: string; schema?: string }) => {
+  .option("--dry-run", "Show what would run without executing", false)
+  .action(async (options) => {
     try {
       console.log("🚀 Deploying all migrations...\n");
+
+      if (options.dryRun) {
+        console.log("[DRY RUN] Showing what would be executed:\n");
+      }
 
       // Step 1: Deploy schema migrations
       console.log("📦 Step 1/3: Deploying schema migrations...");
@@ -274,34 +292,68 @@ program
 
       // Step 3: Run data migrations
       console.log("🔄 Step 3/3: Running data migrations...");
-      const prisma = await getPrismaClient();
-      const migrationsDir = options.dir || getMigrationsDir();
-      const migrationsTable = options.table || getMigrationsTable();
+      const { runner } = await createRunner(program.opts());
       
-      try {
-        const runner = new MigrationRunner(prisma, {
-          migrationsDir,
-          migrationsTable,
-        });
-        
-        const result = await runner.runMigrations();
-        
-        if (!result.success) {
-          console.error(`\n   ✗ Migration failed at: ${result.failedMigration}`);
-          if (result.error) {
-            console.error(`   Error: ${result.error.message}`);
-          }
-          process.exit(1);
+      const result = await runner.runMigrations({ dryRun: options.dryRun });
+      
+      if (!result.success) {
+        console.error(`\n   ✗ Migration failed at: ${result.failedMigration}`);
+        if (result.error) {
+          console.error(`   Error: ${result.error.message}`);
         }
-        
+        process.exit(1);
+      }
+      
+      if (options.dryRun) {
+        console.log("\n   [DRY RUN] No changes were made.");
+      } else {
         console.log("   ✓ Data migrations complete\n");
         console.log("🎉 All migrations deployed successfully!");
-      } finally {
-        await prisma.$disconnect();
       }
     } catch (error) {
       console.error("\n✗ Deployment failed:", error);
       process.exit(1);
+    }
+  });
+
+program
+  .command("export")
+  .description("Export migration history")
+  .requiredOption("-f, --format <format>", "Export format (json, csv, html)")
+  .option("-o, --output <path>", "Output file path (defaults to stdout)")
+  .action(async (options) => {
+    const { runner } = await createRunner(program.opts());
+    const executed = await runner.getExecutedMigrations();
+    
+    const content = writeExport(executed, {
+      format: options.format,
+      output: options.output,
+    });
+    
+    if (!options.output) {
+      console.log(content);
+    } else {
+      console.log(`✓ Exported to ${options.output}`);
+    }
+  });
+
+program
+  .command("config")
+  .description("Manage configuration")
+  .option("--init", "Create a sample config file")
+  .action(async (options) => {
+    if (options.init) {
+      try {
+        const configPath = createSampleConfig(process.cwd());
+        console.log(`✓ Created config file: ${configPath}`);
+      } catch (error) {
+        console.error(`✗ Failed to create config: ${error}`);
+        process.exit(1);
+      }
+    } else {
+      const config = await loadConfig();
+      console.log("Current configuration:\n");
+      console.log(JSON.stringify(config, null, 2));
     }
   });
 

@@ -1,0 +1,277 @@
+<html><head><meta charset="utf-8"/><title>Prisma Shift Test Report</title><style type="text/css">:root {
+  --text-primary: #111;
+  --text-secondary: #4f4f4f;
+  --success: #006633;
+  --success-bright: #80ffbf;
+  --danger: #cc071e;
+  --danger-bright: #fbdfe0;
+  --warning: #995c00;
+  --warning-bright: #ffeea8;
+  --panel: #eee;
+  --border: #949494;
+  --disabled: #6b6b6b;
+}
+
+html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  color: var(--text-primary);
+}
+body {
+  padding: 2rem 1rem;
+}
+.jesthtml-content {
+  margin: 0 auto;
+  max-width: 70rem;
+}
+header {
+  display: flex;
+  align-items: center;
+}
+#title {
+  margin: 0;
+  flex-grow: 1;
+}
+#logo {
+  height: 4rem;
+}
+#timestamp {
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+#metadata-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.additional-information-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+}
+
+/** SUMMARY */
+#summary {
+  color: var(--text-primary);
+  display: flex;
+  font-family: monospace;
+  font-size: 1rem;
+}
+#summary > div {
+  margin-right: 0.5rem;
+  background: var(--panel);
+  padding: 1rem;
+  min-width: 15rem;
+}
+#summary > div:last-child {
+  margin-right: 0;
+}
+@media only screen and (max-width: 720px) {
+  #summary {
+    flex-direction: column;
+  }
+  #summary > div {
+    margin-right: 0;
+    margin-top: 1rem;
+  }
+  #summary > div:first-child {
+    margin-top: 0;
+  }
+}
+
+.summary-total {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.summary-passed {
+  color: var(--success);
+  border-left: 0.4rem solid var(--success);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-failed,
+.summary-obsolete-snapshots {
+  color: var(--danger);
+  border-left: 0.4rem solid var(--danger);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-pending {
+  color: var(--warning);
+  border-left: 0.4rem solid var(--warning);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-empty {
+  color: var(--disabled);
+  border-left: 0.4rem solid var(--disabled);
+  margin-bottom: 0.15rem;
+}
+
+.test-result {
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+}
+.test-result:last-child {
+  border: 0;
+}
+.test-result.passed {
+  background-color: var(--success-bright);
+  color: var(--success);
+}
+.test-result.failed {
+  background-color: var(--danger-bright);
+  color: var(--danger);
+}
+.test-result.pending {
+  background-color: var(--warning-bright);
+  color: var(--warning);
+}
+
+.test-info {
+  display: flex;
+  justify-content: space-between;
+}
+.test-suitename {
+  width: 20%;
+  text-align: left;
+  font-weight: bold;
+  word-break: break-word;
+}
+.test-title {
+  width: 40%;
+  text-align: left;
+  font-style: italic;
+}
+.test-status {
+  width: 20%;
+  text-align: right;
+}
+.test-duration {
+  width: 10%;
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+.failureMessages {
+  padding: 0 1rem;
+  margin-top: 1rem;
+  border-top: 1px dashed var(--danger);
+}
+.failureMessages.suiteFailure {
+  border-top: none;
+}
+.failureMsg {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+.suite-container {
+  margin-bottom: 1rem;
+}
+.suite-info {
+  padding: 1rem;
+  background-color: var(--panel);
+  color: var(--text-secondary);
+  border: 0.15rem solid;
+  border-color: var(--panel);
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.suite-info:hover {
+  border-color: var(--border);
+  cursor: pointer;
+}
+.suite-info .suite-path {
+  word-break: break-all;
+  flex-grow: 1;
+  font-family: monospace;
+  font-size: 1rem;
+}
+.suite-info .suite-time {
+  margin-left: 1rem;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.85rem;
+}
+.suite-info .suite-time.warn {
+  background-color: var(--danger);
+  color: #fff;
+}
+.suite-info:before {
+  content: "\2303";
+  display: inline-block;
+  margin-right: 1rem;
+  transform: rotate(180deg) translateY(0.15rem);
+}
+.suite-container[open] .suite-info:before {
+  transform: rotate(0deg) translateY(0.15rem);
+}
+
+/* CONSOLE LOGS */
+.suite-consolelog {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: var(--panel);
+}
+.suite-consolelog-header {
+  font-weight: bold;
+}
+.suite-consolelog-item {
+  padding: 0.5rem;
+}
+.suite-consolelog-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-consolelog-item-origin {
+  color: var(--text-secondary);
+  font-weight: bold;
+}
+.suite-consolelog-item-message {
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+
+/* OBSOLETE SNAPSHOTS */
+.suite-obsolete-snapshots {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: var(--danger-bright);
+  color: var(--danger);
+}
+.suite-obsolete-snapshots-header {
+  font-weight: bold;
+}
+.suite-obsolete-snapshots-item {
+  padding: 0.5rem;
+}
+.suite-obsolete-snapshots-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-obsolete-snapshots-item-message {
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+</style></head><body><main class="jesthtml-content"><header><h1 id="title">Prisma Shift Test Report</h1></header><section id="metadata-container"><div id="timestamp">Started: 2026-03-28 01:07:17</div><div id="summary"><div id="suite-summary"><div class="summary-total">Suites (14)</div><div class="summary-passed ">14 passed</div><div class="summary-failed  summary-empty">0 failed</div><div class="summary-pending  summary-empty">0 pending</div></div><div id="test-summary"><div class="summary-total">Tests (118)</div><div class="summary-passed ">118 passed</div><div class="summary-failed  summary-empty">0 failed</div><div class="summary-pending  summary-empty">0 pending</div></div></div></section><details id="suite-1" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/batch.test.ts</div><div class="suite-time">1.848s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; batchProcess</div><div class="test-title">should apply delay between batches</div><div class="test-status">passed</div><div class="test-duration">0.111s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; estimateBatchSize</div><div class="test-title">should calculate batch size based on row size</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; createProgressTracker</div><div class="test-title">should call done</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; streamProcess</div><div class="test-title">should call onProgress</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; estimateBatchSize</div><div class="test-title">should clamp to maximum of 10000</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; estimateBatchSize</div><div class="test-title">should clamp to minimum of 100</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; batchProcess</div><div class="test-title">should collect errors without stopping</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; batchProcess</div><div class="test-title">should handle empty result</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; streamProcess</div><div class="test-title">should process all items from stream</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; batchProcess</div><div class="test-title">should process all items in batches</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; streamProcess</div><div class="test-title">should respect limit</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; batchProcessWithRetry</div><div class="test-title">should retry on failure</div><div class="test-status">passed</div><div class="test-duration">0.024s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; createProgressTracker</div><div class="test-title">should set absolute value</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; batchProcessWithRetry</div><div class="test-title">should succeed on first attempt</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; createProgressTracker</div><div class="test-title">should track progress increments</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Batch Processing &gt; batchProcess</div><div class="test-title">should use cursor for pagination</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div></div></details><details id="suite-2" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/cli.test.ts</div><div class="suite-time">0.3s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">CLI &gt; init command</div><div class="test-title">should create migrations directory</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CLI &gt; status command</div><div class="test-title">should display migration status correctly</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CLI &gt; run command</div><div class="test-title">should execute pending migrations</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CLI &gt; error handling</div><div class="test-title">should exit with error code on migration failure</div><div class="test-status">passed</div><div class="test-duration">0.008s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CLI &gt; create command</div><div class="test-title">should generate migration file with correct naming</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CLI &gt; run command</div><div class="test-title">should handle migration failures</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CLI &gt; rollback command</div><div class="test-title">should return false if no migrations to rollback</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CLI &gt; rollback command</div><div class="test-title">should rollback last migration</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CLI &gt; environment variables</div><div class="test-title">should use DATA_MIGRATIONS_DIR from environment</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CLI &gt; environment variables</div><div class="test-title">should use DATA_MIGRATIONS_TABLE from environment</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div></div></details><details id="suite-3" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/config.test.ts</div><div class="suite-time">1.654s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Config &gt; createSampleConfig</div><div class="test-title">should create a sample config file</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Config &gt; mergeConfig</div><div class="test-title">should deeply merge nested objects</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Config &gt; loadConfig</div><div class="test-title">should load JSON config file</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Config &gt; loadConfig</div><div class="test-title">should merge user config with defaults</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Config &gt; mergeConfig</div><div class="test-title">should override defaults with user values</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Config &gt; loadConfig</div><div class="test-title">should return default config when no config file exists</div><div class="test-status">passed</div><div class="test-duration">0.025s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Config &gt; loadConfig</div><div class="test-title">should throw error for invalid JSON</div><div class="test-status">passed</div><div class="test-duration">0.008s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Config &gt; createSampleConfig</div><div class="test-title">should throw error if config already exists</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div></div></details><details id="suite-4" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/export.test.ts</div><div class="suite-time">1.878s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Export &gt; exportMigrations</div><div class="test-title">should export to CSV format</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Export &gt; exportMigrations</div><div class="test-title">should export to HTML format</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Export &gt; exportMigrations</div><div class="test-title">should export to JSON format</div><div class="test-status">passed</div><div class="test-duration">0.004s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Export &gt; formatDuration</div><div class="test-title">should format hours and minutes</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Export &gt; formatDuration</div><div class="test-title">should format milliseconds</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Export &gt; formatDuration</div><div class="test-title">should format minutes and seconds</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Export &gt; formatDuration</div><div class="test-title">should format seconds</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Export &gt; exportMigrations</div><div class="test-title">should include formatted duration</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Export &gt; writeExport</div><div class="test-title">should return content when no output path specified</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Export &gt; exportMigrations</div><div class="test-title">should throw error for unsupported format</div><div class="test-status">passed</div><div class="test-duration">0.023s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Export &gt; writeExport</div><div class="test-title">should write to file when output path specified</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div></div></details><details id="suite-5" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/extension.test.ts</div><div class="suite-time">1.877s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Extension &gt; createMigrationExtension</div><div class="test-title">should create extension with options</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Extension &gt; withDataMigrations</div><div class="test-title">should extend Prisma client</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Extension &gt; createPrismaClientWithMigrations</div><div class="test-title">should throw if PrismaClient not found</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Extension &gt; withDataMigrations</div><div class="test-title">should use provided migrations dir</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div></div></details><details id="suite-6" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/generator.test.ts</div><div class="suite-time">1.934s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Generator</div><div class="test-title">should export generator handler</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Generator</div><div class="test-title">should have generator entry point</div><div class="test-status">passed</div><div class="test-duration">0.215s</div></div></div></div></details><details id="suite-7" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/hooks.test.ts</div><div class="suite-time">0.165s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">HookManager &gt; runAfterAll</div><div class="test-title">should do nothing if no hook configured</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">HookManager &gt; runAfterEach</div><div class="test-title">should do nothing if no hook configured</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">HookManager &gt; runBeforeAll</div><div class="test-title">should do nothing if no hook configured</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">HookManager &gt; runBeforeEach</div><div class="test-title">should do nothing if no hook configured</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">HookManager &gt; constructor</div><div class="test-title">should initialize with all hooks</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">HookManager &gt; constructor</div><div class="test-title">should initialize with empty hooks</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">HookManager &gt; runBeforeAll</div><div class="test-title">should skip hook if script not found</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div></div></details><details id="suite-8" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/integration.test.ts</div><div class="suite-time">0.318s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Integration Tests &gt; MigrationRunner end-to-end flow</div><div class="test-title">should create migration table and run migrations</div><div class="test-status">passed</div><div class="test-duration">0.004s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Integration Tests &gt; MigrationContext</div><div class="test-title">should provide prisma client and log function to migrations</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Integration Tests &gt; MigrationRunner end-to-end flow</div><div class="test-title">should reset all migration records</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Integration Tests &gt; MigrationRunner end-to-end flow</div><div class="test-title">should return false when rolling back migration without down function</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Integration Tests &gt; Transaction handling</div><div class="test-title">should run migrations inside transactions</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Integration Tests &gt; MigrationRunner end-to-end flow</div><div class="test-title">should run multiple migrations in sequence</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Integration Tests &gt; MigrationRunner end-to-end flow</div><div class="test-title">should skip already executed migrations</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Integration Tests &gt; MigrationRunner end-to-end flow</div><div class="test-title">should stop on first failure and not execute subsequent migrations</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Integration Tests &gt; MigrationRunner end-to-end flow</div><div class="test-title">should support rollback with down function</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div></details><details id="suite-9" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/lock.test.ts</div><div class="suite-time">1.817s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; DatabaseLock</div><div class="test-title">should acquire lock using advisory lock</div><div class="test-status">passed</div><div class="test-duration">0.009s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; NoopLock</div><div class="test-title">should always acquire successfully</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; NoopLock</div><div class="test-title">should always report as held</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; createLock</div><div class="test-title">should create DatabaseLock when enabled</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; createLock</div><div class="test-title">should create NoopLock when disabled</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; DatabaseLock</div><div class="test-title">should extend lock timeout</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; NoopLock</div><div class="test-title">should extend without error</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; DatabaseLock</div><div class="test-title">should fall back to table-based lock when advisory locks not supported</div><div class="test-status">passed</div><div class="test-duration">0.013s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; DatabaseLock</div><div class="test-title">should release lock using advisory unlock</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; NoopLock</div><div class="test-title">should release without error</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; DatabaseLock</div><div class="test-title">should retry lock acquisition on failure</div><div class="test-status">passed</div><div class="test-duration">0.026s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; DatabaseLock</div><div class="test-title">should return false if lock cannot be acquired after retries</div><div class="test-status">passed</div><div class="test-duration">0.01s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; DatabaseLock</div><div class="test-title">should return true if already held when acquiring</div><div class="test-status">passed</div><div class="test-duration">0.004s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Lock &gt; DatabaseLock</div><div class="test-title">should track if lock is held</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div></details><details id="suite-10" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/logger.test.ts</div><div class="suite-time">1.819s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; createLogger</div><div class="test-title">should create ConsoleLogger for non-silent levels</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; createLogger</div><div class="test-title">should create SilentLogger for silent level</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; ConsoleLogger</div><div class="test-title">should display batch progress</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; ConsoleLogger</div><div class="test-title">should log errors with stack trace</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; ConsoleLogger</div><div class="test-title">should log messages at or above configured level</div><div class="test-status">passed</div><div class="test-duration">0.04s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; ConsoleLogger</div><div class="test-title">should not display progress when progress is disabled</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; ConsoleLogger</div><div class="test-title">should not log when level is silent</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; createSilentLogger</div><div class="test-title">should not output anything</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; ConsoleLogger</div><div class="test-title">should track hook events</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; ConsoleLogger</div><div class="test-title">should track lock events</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; ConsoleLogger</div><div class="test-title">should track migration end with failure</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; ConsoleLogger</div><div class="test-title">should track migration end with success</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; ConsoleLogger</div><div class="test-title">should track migration errors</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Logger &gt; ConsoleLogger</div><div class="test-title">should track migration start</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div></div></details><details id="suite-11" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/migration-runner.test.ts</div><div class="suite-time">0.354s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; reset</div><div class="test-title">should clear all migration records</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; ensureMigrationsTable</div><div class="test-title">should create table if it does not exist</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; runMigrations</div><div class="test-title">should execute pending migrations</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; ensureMigrationsTable</div><div class="test-title">should not create table if it already exists</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; getStatus</div><div class="test-title">should return correct status with pending and executed migrations</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; getExecutedMigrations</div><div class="test-title">should return empty array if no migrations</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; getExecutedMigrations</div><div class="test-title">should return executed migrations</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; rollbackLast</div><div class="test-title">should return false if migration has no down function</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; rollbackLast</div><div class="test-title">should return false if no migrations to rollback</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; runMigrations</div><div class="test-title">should return success if no pending migrations</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; rollbackLast</div><div class="test-title">should rollback the last executed migration</div><div class="test-status">passed</div><div class="test-duration">0.008s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">MigrationRunner &gt; runMigrations</div><div class="test-title">should stop on first failure</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div></div></details><details id="suite-12" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/types.test.ts</div><div class="suite-time">0.111s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Types &gt; DataMigration interface</div><div class="test-title">should accept migration without optional down function</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Types &gt; DataMigration interface</div><div class="test-title">should accept valid migration object</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Types &gt; MigrationRecord interface</div><div class="test-title">should accept valid migration record</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Types &gt; MigrationContext interface</div><div class="test-title">should have required properties</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div></div></details><details id="suite-13" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/utils.test.ts</div><div class="suite-time">1.6s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Utils &gt; ensureMigrationsDir</div><div class="test-title">should be defined</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Utils &gt; generateMigrationId</div><div class="test-title">should generate ID with timestamp and name</div><div class="test-status">passed</div><div class="test-duration">0.004s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Utils &gt; generateMigrationTemplate</div><div class="test-title">should generate valid TypeScript template</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Utils &gt; generateMigrationId</div><div class="test-title">should handle name with spaces</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Utils &gt; generateMigrationId</div><div class="test-title">should handle name with special characters</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div></div></details><details id="suite-14" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">tests/validation.test.ts</div><div class="suite-time">1.588s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Validation &gt; formatValidationResult</div><div class="test-title">should format invalid result with errors</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Validation &gt; formatValidationResult</div><div class="test-title">should format valid result</div><div class="test-status">passed</div><div class="test-duration">0.01s</div></div></div></div></details></main></body></html>
