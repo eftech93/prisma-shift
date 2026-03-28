@@ -1,6 +1,15 @@
 # Prisma Shift
 
+[![Documentation](https://img.shields.io/badge/docs-eftech93.github.io%2Fprisma--shift-blue)](https://eftech93.github.io/prisma-shift/)
+[![Test Coverage](https://img.shields.io/badge/coverage-60%25-yellowgreen)](https://eftech93.github.io/prisma-shift/test-report.html)
+[![Tests](https://img.shields.io/badge/tests-118%20passing-brightgreen)](https://eftech93.github.io/prisma-shift/test-report.html)
+[![Version](https://img.shields.io/npm/v/@eftech93/prisma-shift)](https://www.npmjs.com/package/@eftech93/prisma-shift)
+
+**[📚 Full Documentation](https://eftech93.github.io/prisma-shift/)** | **[📊 Test Report](https://eftech93.github.io/prisma-shift/test-report.html)**
+
 TypeScript-based data migrations for Prisma. Run data transformations alongside your schema migrations with full type safety and access to the Prisma Client.
+
+> **🚀 New in v0.0.2:** Distributed locking, batch processing, conditional migrations, migration dependencies, and more!
 
 ## Why?
 

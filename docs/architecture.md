@@ -8,40 +8,22 @@ Prisma Shift is built with a modular architecture that separates concerns while 
 
 ```mermaid
 flowchart TB
-    subgraph Input["Input Layer"]
-        CLI["CLI Commands"]
-        API["Programmatic API"]
-        GEN["Prisma Generator"]
-    end
-    
-    subgraph Core["Core Engine"]
-        direction TB
-        RUNNER["MigrationRunner"]
-        
-        subgraph Services["Services"]
-            LOCK["Lock Service"]
-            HOOKS["Hook Manager"]
-            BATCH["Batch Processor"]
-            VAL["Validator"]
-        end
-        
-        subgraph Utils["Utilities"]
-            LOG["Logger"]
-            CONF["Config Loader"]
-            TS["TS Loader"]
-        end
-    end
-    
-    subgraph Storage["Storage Layer"]
-        FILES["Migration Files (*.ts)"]
-        META["_dataMigration Table"]
-        LOCKT["_dataMigrationLock Table"]
-    end
-    
-    subgraph Prisma["Prisma Layer"]
-        CLIENT["PrismaClient"]
-        DB[(Database)]
-    end
+    CLI[CLI Commands]
+    API[Programmatic API]
+    GEN[Prisma Generator]
+    RUNNER[MigrationRunner]
+    LOCK[Lock Service]
+    HOOKS[Hook Manager]
+    BATCH[Batch Processor]
+    VAL[Validator]
+    LOG[Logger]
+    CONF[Config Loader]
+    TS[TS Loader]
+    FILES[Migration Files]
+    META[DataMigration Table]
+    LOCKT[Lock Table]
+    CLIENT[PrismaClient]
+    DB[(Database)]
     
     CLI --> RUNNER
     API --> RUNNER
@@ -51,15 +33,14 @@ flowchart TB
     RUNNER --> HOOKS
     RUNNER --> BATCH
     RUNNER --> VAL
-    
     RUNNER --> LOG
     RUNNER --> CONF
     RUNNER --> TS
+    RUNNER --> META
     
     LOCK --> LOCKT
     VAL --> FILES
     TS --> FILES
-    RUNNER --> META
     
     BATCH --> CLIENT
     HOOKS --> CLIENT

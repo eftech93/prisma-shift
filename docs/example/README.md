@@ -7,37 +7,23 @@ The **Unified Demo** is a comprehensive example showcasing all features of Prism
 <div class="diagram">
 
 ```mermaid
-flowchart TB
-    subgraph Phase1["Phase 1: Foundation"]
-        P1_1[Schema: Users & Posts]
-        P1_2[Data: Seed Users]
-        P1_3[Data: Seed Posts]
-    end
+flowchart LR
+    P1[Phase 1 Foundation] --> P2[Phase 2 Enhancement]
+    P2 --> P3[Phase 3 Features]
+    P3 --> P4[Phase 4 Advanced]
     
-    subgraph Phase2["Phase 2: Enhancement"]
-        P2_1[Schema: Categories & Profiles]
-        P2_2[Data: Create Categories]
-        P2_3[Data: Assign to Posts]
-        P2_4[Data: Setup Profiles]
-    end
+    P1 --> P1A[Schema Users Posts]
+    P1 --> P1B[Data Seed]
     
-    subgraph Phase3["Phase 3: Features"]
-        P3_1[Schema: Tags, Content & Stats]
-        P3_2[Data: Import Tags]
-        P3_3[Data: Generate Slugs]
-        P3_4[Data: Aggregate Stats]
-        P3_5[Data: Migrate Status]
-        P3_6[Data: Sync Counts]
-    end
+    P2 --> P2A[Schema Categories]
+    P2 --> P2B[Data Categories]
     
-    subgraph Phase4["Phase 4: Advanced"]
-        P4_1[Batch Reindex]
-        P4_2[Conditional Migration]
-        P4_3[Dependencies]
-        P4_4[Long Running]
-    end
+    P3 --> P3A[Schema Tags Stats]
+    P3 --> P3B[Data Features]
     
-    Phase1 --> Phase2 --> Phase3 --> Phase4
+    P4 --> P4A[Batch Processing]
+    P4 --> P4B[Conditional]
+    P4 --> P4C[Dependencies]
 ```
 
 </div>
@@ -156,66 +142,52 @@ sequenceDiagram
     
     User->>CLI: run --with-schema
     
-    rect rgb(200, 230, 200)
-        Note over CLI,Schema: Phase 1: Initial Schema
-        CLI->>Schema: 01_init
-        Schema->>DB: CREATE TABLE User, Post
-        DB-->>Schema: OK
-        Schema-->>CLI: Complete
-    end
+    Note over CLI,Schema: Phase 1 Initial Schema
+    CLI->>Schema: 01_init
+    Schema->>DB: CREATE TABLE User, Post
+    DB-->>Schema: OK
+    Schema-->>CLI: Complete
     
-    rect rgb(230, 230, 200)
-        Note over CLI,Data: Phase 1: Seed Data
-        CLI->>Data: 01_load_seed_data
-        Data->>DB: INSERT 4 users, 5 posts
-        DB-->>Data: OK
-        Data-->>CLI: Complete
-    end
+    Note over CLI,Data: Phase 1 Seed Data
+    CLI->>Data: 01_load_seed_data
+    Data->>DB: INSERT 4 users, 5 posts
+    DB-->>Data: OK
+    Data-->>CLI: Complete
     
-    rect rgb(200, 230, 200)
-        Note over CLI,Schema: Phase 2: Enhance Schema
-        CLI->>Schema: 02_add_categories
-        Schema->>DB: CREATE Category, ADD profile
-        DB-->>Schema: OK
-        Schema-->>CLI: Complete
-    end
+    Note over CLI,Schema: Phase 2 Enhance Schema
+    CLI->>Schema: 02_add_categories
+    Schema->>DB: CREATE Category, ADD profile
+    DB-->>Schema: OK
+    Schema-->>CLI: Complete
     
-    rect rgb(230, 230, 200)
-        Note over CLI,Data: Phase 2: Categories & Profiles
-        CLI->>Data: 02_setup_categories
-        Data->>DB: Create 5 categories, assign
-        DB-->>Data: OK
-        Data-->>CLI: Complete
-        
-        CLI->>Data: 03_setup_profiles
-        Data->>DB: Update 4 user profiles
-        DB-->>Data: OK
-        Data-->>CLI: Complete
-    end
+    Note over CLI,Data: Phase 2 Categories and Profiles
+    CLI->>Data: 02_setup_categories
+    Data->>DB: Create 5 categories
+    DB-->>Data: OK
+    Data-->>CLI: Complete
     
-    rect rgb(200, 230, 200)
-        Note over CLI,Schema: Phase 3: Feature Schema
-        CLI->>Schema: 03_add_tags_stats
-        Schema->>DB: CREATE Tag, PostStats, ADD fields
-        DB-->>Schema: OK
-        Schema-->>CLI: Complete
-    end
+    CLI->>Data: 03_setup_profiles
+    Data->>DB: Update 4 user profiles
+    DB-->>Data: OK
+    Data-->>CLI: Complete
     
-    rect rgb(230, 230, 200)
-        Note over CLI,Data: Phase 3: Features
-        CLI->>Data: 04-08 Various
-        Data->>DB: Import tags, generate fields, etc.
-        DB-->>Data: OK
-        Data-->>CLI: Complete
-    end
+    Note over CLI,Schema: Phase 3 Feature Schema
+    CLI->>Schema: 03_add_tags_stats
+    Schema->>DB: CREATE Tag, PostStats
+    DB-->>Schema: OK
+    Schema-->>CLI: Complete
     
-    rect rgb(230, 200, 230)
-        Note over CLI,Data: Phase 4: Advanced
-        CLI->>Data: 09-12 Advanced features
-        Data->>DB: Batch, conditional, deps, timeout
-        DB-->>Data: OK
-        Data-->>CLI: Complete
-    end
+    Note over CLI,Data: Phase 3 Features
+    CLI->>Data: 04-08 Various
+    Data->>DB: Import tags, generate fields
+    DB-->>Data: OK
+    Data-->>CLI: Complete
+    
+    Note over CLI,Data: Phase 4 Advanced
+    CLI->>Data: 09-12 Advanced features
+    Data->>DB: Batch, conditional, deps
+    DB-->>Data: OK
+    Data-->>CLI: Complete
     
     CLI-->>User: All migrations complete!
 ```
