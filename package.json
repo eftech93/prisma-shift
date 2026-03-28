@@ -1,15 +1,18 @@
 {
   "name": "@eftech93/prisma-shift",
   "version": "0.0.2",
-  "description": "Prisma Client Extension for TypeScript-based data migrations",
+  "description": "TypeScript-based data migrations for Prisma. Run data transformations alongside schema migrations with distributed locking, batch processing, and 60%+ test coverage.",
   "keywords": [
     "prisma",
     "migration",
     "data-migration",
     "typescript",
-    "database"
+    "database",
+    "distributed-locking",
+    "batch-processing"
   ],
-  "homepage": "https://github.com/eftech93/prisma-shift#readme",
+  "homepage": "https://eftech93.github.io/prisma-shift/",
+  "documentation": "https://eftech93.github.io/prisma-shift/",
   "bugs": {
     "url": "https://github.com/eftech93/prisma-shift/issues"
   },

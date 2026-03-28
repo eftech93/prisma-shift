@@ -6,6 +6,12 @@ Run data transformations alongside your schema migrations with full type safety 
 
 ---
 
+🌐 **Live Documentation:** [https://eftech93.github.io/prisma-shift/](https://eftech93.github.io/prisma-shift/)
+
+📊 **Test Report:** [View Latest Results](test-report.html)
+
+---
+
 ## Why Prisma Shift?
 
 Prisma's native migrations handle schema changes beautifully, but data migrations often require:
@@ -24,24 +30,32 @@ Prisma's native migrations handle schema changes beautifully, but data migration
 <div class="diagram">
 
 ```mermaid
-mindmap
-  root((Prisma Shift))
-    Core
-      TypeScript Migrations
-      Prisma Client Access
-      Migration History
-      Rollback Support
-    Advanced
-      Distributed Locking
-      Batch Processing
-      Conditional Execution
-      Migration Dependencies
-      Timeouts & Signals
-    Integration
-      Prisma Generator
-      CLI Wrapper
-      Config File
-      Lifecycle Hooks
+flowchart TB
+    subgraph Core["Core Features"]
+        C1[TypeScript Migrations]
+        C2[Prisma Client Access]
+        C3[Migration History]
+        C4[Rollback Support]
+    end
+    
+    subgraph Advanced["Advanced Features"]
+        A1[Distributed Locking]
+        A2[Batch Processing]
+        A3[Conditional Execution]
+        A4[Migration Dependencies]
+        A5[Timeouts & Signals]
+    end
+    
+    subgraph Integration["Integration"]
+        I1[Prisma Generator]
+        I2[CLI Wrapper]
+        I3[Config File]
+        I4[Lifecycle Hooks]
+    end
+    
+    PS[Prisma Shift] --> Core
+    PS --> Advanced
+    PS --> Integration
 ```
 
 </div>
@@ -136,14 +150,14 @@ flowchart LR
     A[Migration] --> B[Schema Migration]
     A --> C[Data Migration]
     
-    B --> D[SQL DDL
-    CREATE/ALTER/DROP]
+    B --> D[SQL DDL]
+    B --> E[CREATE ALTER DROP]
     
-    C --> E[TypeScript/JS
-    Transform Data]
-    C --> F[Backfill Data]
-    C --> G[Computed Fields]
-    C --> H[Enum Migration]
+    C --> F[TypeScript JS]
+    C --> G[Transform Data]
+    C --> H[Backfill Data]
+    C --> I[Computed Fields]
+    C --> J[Enum Migration]
 ```
 
 </div>
