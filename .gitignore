@@ -15,6 +15,9 @@ pnpm-lock.yaml
 coverage/
 .nyc_output/
 
+# Allow docs coverage (for GitHub Pages)
+!docs/coverage/
+
 # Environment
 .env
 .env.local

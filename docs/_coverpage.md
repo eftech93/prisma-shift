@@ -20,6 +20,8 @@ Run data transformations alongside your schema migrations with full type safety 
 
 [GitHub](https://github.com/eftech93/prisma-shift)
 [📚 Documentation](https://eftech93.github.io/prisma-shift/)
+[📋 Test Report](test-report.md)
+[📈 Coverage](coverage-report.md)
 [Get Started](#prisma-shift)
 
 ![color](#f7fafc)

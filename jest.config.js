@@ -10,23 +10,8 @@ module.exports = {
     '!src/**/*.d.ts',
     '!src/cli.ts',
   ],
-  coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov', 'html'],
+  coverageDirectory: 'docs/coverage',
+  coverageReporters: ['text', 'html'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   testTimeout: 30000,
-  reporters: [
-    'default',
-    ['jest-junit', {
-      outputDirectory: './reports',
-      outputName: 'junit.xml',
-    }],
-    ['jest-html-reporter', {
-      pageTitle: 'Prisma Shift Test Report',
-      outputPath: '<rootDir>/docs/test-report.html',
-      includeFailureMsg: true,
-      includeSuiteFailure: true,
-      includeConsoleLog: false, // Disabled to avoid exposing full paths
-      sort: 'titleAsc',
-    }],
-  ],
 };
