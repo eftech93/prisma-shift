@@ -31,8 +31,9 @@
 
 - Architecture
   - [Overview](architecture.md)
-  - [Test Reports](test-report.md)
+  - [📋 Test Report](test-report.md)
   - [📊 HTML Test Report](test-report.html)
+  - [📈 Coverage Report](coverage-report.md)
 
 - Release Notes
   - [v0.0.2](releases/v0.0.2.md)

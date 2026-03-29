@@ -46,6 +46,8 @@
 
 ## Coverage Report
 
+📈 **[View Coverage Report](./coverage-report.md)** - Detailed coverage by file with line-by-line analysis
+
 <div class="diagram">
 
 | File | Statements | Branches | Functions | Lines |
