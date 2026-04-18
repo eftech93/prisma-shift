@@ -1,6 +1,6 @@
 # Test Report
 
-> Generated: 2026-04-18T04:56:04.265Z
+> Generated: 2026-04-18T05:01:38.139Z
 
 📊 **[View Full HTML Test Report](./test-report.html)** - Interactive test results with filtering and search
 
@@ -94,11 +94,11 @@
 - **Duration**: N/A  
 - **Tests**: 11 passed, 0 failed, 0 pending  
 
-#### ✅ tests/hooks.test.ts
+#### ✅ tests/cli.test.ts
 
 - **Status**: passed  
 - **Duration**: N/A  
-- **Tests**: 7 passed, 0 failed, 0 pending  
+- **Tests**: 10 passed, 0 failed, 0 pending  
 
 #### ✅ tests/generator.test.ts
 
@@ -106,23 +106,17 @@
 - **Duration**: N/A  
 - **Tests**: 2 passed, 0 failed, 0 pending  
 
+#### ✅ tests/hooks.test.ts
+
+- **Status**: passed  
+- **Duration**: N/A  
+- **Tests**: 7 passed, 0 failed, 0 pending  
+
 #### ✅ tests/config.test.ts
 
 - **Status**: passed  
 - **Duration**: N/A  
 - **Tests**: 8 passed, 0 failed, 0 pending  
-
-#### ✅ tests/cli.test.ts
-
-- **Status**: passed  
-- **Duration**: N/A  
-- **Tests**: 10 passed, 0 failed, 0 pending  
-
-#### ✅ tests/migration-runner.test.ts
-
-- **Status**: passed  
-- **Duration**: N/A  
-- **Tests**: 12 passed, 0 failed, 0 pending  
 
 #### ✅ tests/validation.test.ts
 
@@ -130,13 +124,13 @@
 - **Duration**: N/A  
 - **Tests**: 2 passed, 0 failed, 0 pending  
 
-#### ✅ tests/migration-runner-squash.test.ts
+#### ✅ tests/migration-runner.test.ts
 
 - **Status**: passed  
 - **Duration**: N/A  
-- **Tests**: 4 passed, 0 failed, 0 pending  
+- **Tests**: 12 passed, 0 failed, 0 pending  
 
-#### ✅ tests/extension.test.ts
+#### ✅ tests/migration-runner-squash.test.ts
 
 - **Status**: passed  
 - **Duration**: N/A  
@@ -147,6 +141,12 @@
 - **Status**: passed  
 - **Duration**: N/A  
 - **Tests**: 14 passed, 0 failed, 0 pending  
+
+#### ✅ tests/extension.test.ts
+
+- **Status**: passed  
+- **Duration**: N/A  
+- **Tests**: 4 passed, 0 failed, 0 pending  
 
 #### ✅ tests/utils.test.ts
 
