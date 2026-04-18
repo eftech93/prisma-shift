@@ -1,6 +1,6 @@
 # Test Report
 
-> Generated: 2026-04-18T04:55:22.541Z
+> Generated: 2026-04-18T04:56:04.265Z
 
 📊 **[View Full HTML Test Report](./test-report.html)** - Interactive test results with filtering and search
 
@@ -76,29 +76,17 @@
 - **Duration**: N/A  
 - **Tests**: 16 passed, 0 failed, 0 pending  
 
-#### ✅ tests/squash.test.ts
-
-- **Status**: passed  
-- **Duration**: N/A  
-- **Tests**: 16 passed, 0 failed, 0 pending  
-
 #### ✅ tests/lock.test.ts
 
 - **Status**: passed  
 - **Duration**: N/A  
 - **Tests**: 14 passed, 0 failed, 0 pending  
 
-#### ✅ tests/generator.test.ts
+#### ✅ tests/squash.test.ts
 
 - **Status**: passed  
 - **Duration**: N/A  
-- **Tests**: 2 passed, 0 failed, 0 pending  
-
-#### ✅ tests/validation.test.ts
-
-- **Status**: passed  
-- **Duration**: N/A  
-- **Tests**: 2 passed, 0 failed, 0 pending  
+- **Tests**: 16 passed, 0 failed, 0 pending  
 
 #### ✅ tests/export.test.ts
 
@@ -106,17 +94,17 @@
 - **Duration**: N/A  
 - **Tests**: 11 passed, 0 failed, 0 pending  
 
-#### ✅ tests/migration-runner.test.ts
+#### ✅ tests/hooks.test.ts
 
 - **Status**: passed  
 - **Duration**: N/A  
-- **Tests**: 12 passed, 0 failed, 0 pending  
+- **Tests**: 7 passed, 0 failed, 0 pending  
 
-#### ✅ tests/extension.test.ts
+#### ✅ tests/generator.test.ts
 
 - **Status**: passed  
 - **Duration**: N/A  
-- **Tests**: 4 passed, 0 failed, 0 pending  
+- **Tests**: 2 passed, 0 failed, 0 pending  
 
 #### ✅ tests/config.test.ts
 
@@ -130,11 +118,17 @@
 - **Duration**: N/A  
 - **Tests**: 10 passed, 0 failed, 0 pending  
 
-#### ✅ tests/hooks.test.ts
+#### ✅ tests/migration-runner.test.ts
 
 - **Status**: passed  
 - **Duration**: N/A  
-- **Tests**: 7 passed, 0 failed, 0 pending  
+- **Tests**: 12 passed, 0 failed, 0 pending  
+
+#### ✅ tests/validation.test.ts
+
+- **Status**: passed  
+- **Duration**: N/A  
+- **Tests**: 2 passed, 0 failed, 0 pending  
 
 #### ✅ tests/migration-runner-squash.test.ts
 
@@ -142,17 +136,23 @@
 - **Duration**: N/A  
 - **Tests**: 4 passed, 0 failed, 0 pending  
 
-#### ✅ tests/utils.test.ts
+#### ✅ tests/extension.test.ts
 
 - **Status**: passed  
 - **Duration**: N/A  
-- **Tests**: 5 passed, 0 failed, 0 pending  
+- **Tests**: 4 passed, 0 failed, 0 pending  
 
 #### ✅ tests/logger.test.ts
 
 - **Status**: passed  
 - **Duration**: N/A  
 - **Tests**: 14 passed, 0 failed, 0 pending  
+
+#### ✅ tests/utils.test.ts
+
+- **Status**: passed  
+- **Duration**: N/A  
+- **Tests**: 5 passed, 0 failed, 0 pending  
 
 #### ✅ tests/types.test.ts
 
