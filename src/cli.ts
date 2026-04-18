@@ -91,7 +91,7 @@ const program = new Command();
 program
   .name("prisma-shift")
   .description("CLI for managing Prisma data migrations")
-  .version("0.0.4")
+  .version("0.0.3")
   .option("-d, --dir <directory>", "Migrations directory")
   .option("-t, --table <table>", "Migrations table name")
   .option("--log-level <level>", "Log level (silent, error, warn, info, debug)", "info")

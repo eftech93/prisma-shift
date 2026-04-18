@@ -11,7 +11,16 @@ module.exports = {
     '!src/cli.ts',
   ],
   coverageDirectory: 'docs/coverage',
-  coverageReporters: ['text', 'html'],
+  coverageReporters: ['text', 'html', 'json-summary'],
+  reporters: [
+    'default',
+    ['jest-html-reporter', {
+      pageTitle: 'Prisma Shift Test Report',
+      outputPath: './docs/test-report.html',
+      includeFailureMsg: true,
+      includeSuiteFailure: true,
+    }]
+  ],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   testTimeout: 30000,
 };

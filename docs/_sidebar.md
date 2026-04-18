@@ -36,5 +36,6 @@
   - [📈 Coverage Report](coverage-report.md)
 
 - Release Notes
+  - [v0.0.3](releases/v0.0.3.md)
   - [v0.0.2](releases/v0.0.2.md)
   - [v0.0.1](releases/v0.0.1.md)
