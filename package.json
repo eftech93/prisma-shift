@@ -1,6 +1,6 @@
 {
   "name": "@eftech93/prisma-shift",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "TypeScript-based data migrations for Prisma. Run data transformations alongside schema migrations with distributed locking, batch processing, and 60%+ test coverage.",
   "keywords": [
     "prisma",

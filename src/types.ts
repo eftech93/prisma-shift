@@ -214,6 +214,18 @@ export interface CLIOptions {
 }
 
 // ============================================================================
+// Squash Types
+// ============================================================================
+
+export interface SquashResult {
+  success: boolean;
+  removedRecords: number;
+  addedRecord: boolean;
+  updatedRecord: boolean;
+  error?: string;
+}
+
+// ============================================================================
 // Extension Types
 // ============================================================================
 

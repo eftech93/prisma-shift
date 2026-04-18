@@ -9,6 +9,7 @@ export * from "./hooks";
 export * from "./batch";
 export * from "./validation";
 export * from "./export";
+export * from "./squash";
 
 // Extension exports
 export {

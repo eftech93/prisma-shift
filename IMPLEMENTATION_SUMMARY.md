@@ -166,7 +166,21 @@ const migration: DataMigration = {
 };
 ```
 
-#### 3. Migration Dependencies
+#### 3. Migration Squashing (`src/squash.ts`)
+```bash
+npx prisma-shift squash --from=20240301 --to=20240331 --name="march_changes"
+```
+
+Features:
+- Combine multiple executed migrations into one file
+- Extract and merge `up` function bodies from source files
+- Deduplicate imports automatically
+- Update database records (delete old, insert squashed)
+- Dry-run support
+- Optional `--keep` to preserve original files
+- Safety check: blocks if any migrations in range are pending
+
+#### 4. Migration Dependencies
 ```typescript
 const migration: DataMigration = {
   id: "20240325_add_user_stats",
@@ -231,6 +245,7 @@ npx prisma-shift run \
 | `src/batch.ts` | Batch processing utilities |
 | `src/validation.ts` | Migration validation |
 | `src/export.ts` | Export to JSON/CSV/HTML |
+| `src/squash.ts` | Migration squashing utility |
 
 ---
 
@@ -243,6 +258,7 @@ npx prisma-shift run \
 | `src/utils.ts` | Config-aware TypeScript loading |
 | `src/cli.ts` | New commands, config support |
 | `src/index.ts` | Export all new modules |
+| `src/squash.ts` | Export squash utilities |
 
 ---
 

@@ -265,6 +265,7 @@ const prisma = createPrismaClientWithMigrations({
 | `validate` | Validate migration files |
 | `rollback` | Rollback last migration |
 | `reset` | Clear migration records |
+| `squash` | Squash multiple migrations into one |
 | `export` | Export migration history |
 
 ### Prisma CLI Wrapper (Recommended)
@@ -292,6 +293,27 @@ Add to your `package.json`:
   }
 }
 ```
+
+### Squash Migrations
+
+Clean up long migration histories by combining multiple migrations into one:
+
+```bash
+# Squash migrations from March 2024 into a single file
+npx prisma-shift squash --from=20240301 --to=20240331 --name="march_changes"
+
+# Dry run to preview what would happen
+npx prisma-shift squash --from=20240301 --to=20240331 --name="march_changes" --dry-run
+
+# Keep original files (don't delete them)
+npx prisma-shift squash --from=20240301 --to=20240331 --name="march_changes" --keep
+```
+
+**What it does:**
+- Combines all migration `up` functions in the range into a single new migration file
+- Removes the original migration files (unless `--keep` is used)
+- Updates the database migration records to reflect the squashed migration
+- Only works on **already-executed** migrations (pending migrations in the range will block the operation)
 
 ### Unified Deploy Command (Recommended)
 

@@ -46,6 +46,7 @@ npm run dev
 | `npm run studio` | Open Prisma Studio (DB UI at localhost:5555) |
 | `npm run data:status` | Check migration status |
 | `npm run data:create <name>` | Create a new data migration |
+| `npm run data:squash -- --from=X --to=Y --name=Z` | Squash migrations into one |
 
 ## 🏃 Step-by-Step Guide
 
@@ -213,6 +214,55 @@ make reset
 npx prisma migrate reset --force
 npx prisma-shift deploy
 ```
+
+## 🗜️ Squash Migrations
+
+After running all migrations, you can clean up the history by squashing them. This is useful when you have many small migrations that have already been deployed and you want a cleaner setup for fresh deployments.
+
+**Dry run first (recommended):**
+
+```bash
+npx prisma-shift squash \
+  --from=20240324010001 \
+  --to=20240324010004 \
+  --name="initial_setup" \
+  --dry-run
+```
+
+**Squash the initial seed + category setup migrations:**
+
+```bash
+npx prisma-shift squash \
+  --from=20240324010001 \
+  --to=20240324010004 \
+  --name="initial_setup"
+```
+
+This will:
+- Create a single `2024xxxxxxxxx_initial_setup.ts` file combining migrations 01–04
+- Remove the original 4 migration files
+- Update the database records to reflect the squashed migration
+
+**Squash all remaining migrations into one:**
+
+```bash
+npx prisma-shift squash \
+  --from=20240324010005 \
+  --to=20240324010012 \
+  --name="content_and_stats"
+```
+
+**Keep original files (for safety):**
+
+```bash
+npx prisma-shift squash \
+  --from=20240324010001 \
+  --to=20240324010012 \
+  --name="all_migrations" \
+  --keep
+```
+
+> **Note:** Squash only works on migrations that have already been executed. If you have pending migrations, run them first with `npx prisma-shift run`.
 
 ## 🐛 Troubleshooting
 

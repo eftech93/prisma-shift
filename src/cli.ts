@@ -9,6 +9,7 @@ import { loadConfig, createSampleConfig, Config } from "./config";
 import { createLogger } from "./logger";
 import { validateMigrations, formatValidationResult } from "./validation";
 import { writeExport } from "./export";
+import { squashMigrations } from "./squash";
 import { 
   generateMigrationId, 
   generateMigrationTemplate, 
@@ -90,7 +91,7 @@ const program = new Command();
 program
   .name("prisma-shift")
   .description("CLI for managing Prisma data migrations")
-  .version("0.1.0")
+  .version("0.0.4")
   .option("-d, --dir <directory>", "Migrations directory")
   .option("-t, --table <table>", "Migrations table name")
   .option("--log-level <level>", "Log level (silent, error, warn, info, debug)", "info")
@@ -334,6 +335,84 @@ program
       console.log(content);
     } else {
       console.log(`✓ Exported to ${options.output}`);
+    }
+  });
+
+program
+  .command("squash")
+  .description("Squash multiple migrations into one")
+  .requiredOption("--from <id>", "Starting migration ID or date prefix")
+  .requiredOption("--to <id>", "Ending migration ID or date prefix")
+  .requiredOption("--name <name>", "Name for the squashed migration")
+  .option("--keep", "Keep original migration files (do not delete)", false)
+  .option("--dry-run", "Show what would be done without making changes", false)
+  .action(async (options) => {
+    try {
+      const config = await loadConfig(process.cwd());
+      const migrationsDir = config.migrationsDir;
+
+      if (options.dryRun) {
+        console.log("[DRY RUN] Showing what would be done:\n");
+      }
+
+      const result = await squashMigrations(
+        migrationsDir,
+        { from: options.from, to: options.to },
+        options.name,
+        { keep: options.keep, dryRun: options.dryRun }
+      );
+
+      console.log(
+        `Found ${result.matchedMigrations.length} migration(s) to squash:`
+      );
+      for (const m of result.matchedMigrations) {
+        console.log(`  - ${m.id}: ${m.name}`);
+      }
+      console.log("");
+
+      if (!options.dryRun) {
+        console.log(`✓ Created squashed migration: ${result.newFilePath}`);
+
+        if (!options.keep && result.removedFiles.length > 0) {
+          console.log(
+            `✓ Removed ${result.removedFiles.length} original migration file(s)`
+          );
+        }
+
+        // Update database records
+        const { runner } = await createRunner(program.opts());
+        const dbResult = await runner.squash(
+          { from: options.from, to: options.to },
+          result.newId,
+          options.name
+        );
+
+        if (!dbResult.success) {
+          console.error(`✗ Database update failed: ${dbResult.error}`);
+          process.exit(1);
+        }
+
+        if (dbResult.removedRecords > 0) {
+          console.log(
+            `✓ Updated database records (${dbResult.removedRecords} removed, ${dbResult.addedRecord ? "1 added" : dbResult.updatedRecord ? "1 updated" : "none"})`
+          );
+        } else {
+          console.log("  No database records to update");
+        }
+      } else {
+        console.log(`[DRY RUN] Would create: ${result.newFilePath}`);
+        if (!options.keep) {
+          console.log(
+            `[DRY RUN] Would remove ${result.matchedMigrations.length} original file(s)`
+          );
+        }
+        console.log("[DRY RUN] Would update database records");
+      }
+
+      console.log("\n✓ Squash complete");
+    } catch (error) {
+      console.error("\n✗ Squash failed:", (error as Error).message);
+      process.exit(1);
     }
   });
 

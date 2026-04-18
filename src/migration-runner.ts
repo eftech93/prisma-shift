@@ -7,6 +7,7 @@ import {
   MigrationContext,
   PrismaClientLike,
   MigrationMetrics,
+  SquashResult,
 } from "./types";
 import { loadMigrations } from "./utils";
 import { Logger, createLogger, createSilentLogger } from "./logger";
@@ -465,5 +466,99 @@ export class MigrationRunner {
     const tableName = this.options.migrationsTable;
     await this.prisma.$executeRawUnsafe(`DELETE FROM "${tableName}"`);
     this.logger.warn("All migration records cleared");
+  }
+
+  /**
+   * Squash executed migrations in a range into a single record.
+   */
+  async squash(
+    range: { from: string; to: string },
+    newMigrationId: string,
+    newMigrationName: string
+  ): Promise<SquashResult> {
+    const status = await this.getStatus();
+
+    const inRange = status.all.filter(
+      (m) => m.id >= range.from && m.id <= range.to
+    );
+
+    const pendingInRange = inRange.filter((m) => m.status === "pending");
+    if (pendingInRange.length > 0) {
+      return {
+        success: false,
+        removedRecords: 0,
+        addedRecord: false,
+        updatedRecord: false,
+        error: `Cannot squash: ${pendingInRange.length} migration(s) in range are pending. Run them first.`,
+      };
+    }
+
+    const executedInRange = inRange.filter((m) => m.status === "executed");
+    if (executedInRange.length === 0) {
+      return {
+        success: true,
+        removedRecords: 0,
+        addedRecord: false,
+        updatedRecord: false,
+      };
+    }
+
+    const existingRecord = status.executed.find((r) => r.id === newMigrationId);
+    const tableName = this.options.migrationsTable;
+
+    try {
+      const ids = executedInRange.map((m) => m.id);
+      if (ids.length > 0) {
+        const placeholders = ids.map((_, i) => `$${i + 1}`).join(", ");
+        await this.prisma.$executeRawUnsafe(
+          `DELETE FROM "${tableName}" WHERE "id" IN (${placeholders})`,
+          ...ids
+        );
+      }
+
+      const totalDuration = executedInRange.reduce(
+        (sum, m) => sum + (m.duration || 0),
+        0
+      );
+
+      const latestExecutedAt = executedInRange.reduce((latest, m) => {
+        const date = m.executedAt || new Date(0);
+        return date > latest ? date : latest;
+      }, new Date(0));
+
+      if (existingRecord) {
+        await this.prisma.$executeRawUnsafe(
+          `UPDATE "${tableName}" SET "name" = $1, "duration" = $2 WHERE "id" = $3`,
+          newMigrationName,
+          totalDuration,
+          newMigrationId
+        );
+      } else {
+        await this.prisma.$executeRawUnsafe(
+          `INSERT INTO "${tableName}" ("id", "name", "createdAt", "executedAt", "duration")
+           VALUES ($1, $2, $3::timestamp, $4::timestamp, $5)`,
+          newMigrationId,
+          newMigrationName,
+          new Date().toISOString(),
+          latestExecutedAt.toISOString(),
+          totalDuration
+        );
+      }
+
+      return {
+        success: true,
+        removedRecords: ids.length,
+        addedRecord: !existingRecord,
+        updatedRecord: !!existingRecord,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        removedRecords: 0,
+        addedRecord: false,
+        updatedRecord: false,
+        error: (error as Error).message,
+      };
+    }
   }
 }
