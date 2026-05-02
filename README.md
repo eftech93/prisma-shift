@@ -1,5 +1,6 @@
 # Prisma Shift
 
+![Tests](https://github.com/eftech93/prisma-shift/actions/workflows/ci.yml/badge.svg)
 [![Documentation](https://img.shields.io/badge/docs-eftech93.github.io%2Fprisma--shift-blue)](https://eftech93.github.io/prisma-shift/)
 [![Test Coverage](https://img.shields.io/badge/coverage-60%25-yellowgreen)](https://eftech93.github.io/prisma-shift/test-report.html)
 [![Tests](https://img.shields.io/badge/tests-118%20passing-brightgreen)](https://eftech93.github.io/prisma-shift/test-report.html)

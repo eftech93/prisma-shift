@@ -9,7 +9,11 @@
     "typescript",
     "database",
     "distributed-locking",
-    "batch-processing"
+    "batch-processing",
+    "orm",
+    "developer-tools",
+    "schema-migration",
+    "sql"
   ],
   "homepage": "https://eftech93.github.io/prisma-shift/",
   "documentation": "https://eftech93.github.io/prisma-shift/",
